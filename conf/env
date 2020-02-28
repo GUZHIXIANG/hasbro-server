@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# setting up your server home 
+export DOMINION_HOME=/root/hasbro-server
+
+
+# setting up other library
+export PYTHON_HOME=$DOMINION_HOME/bin
+export DOMINION_LIBRARY=$DOMINION_HOME/library
+export DJANGO_HOME=$DOMINION_HOME/gallant
+export PATH=$PATH:$PYTHON_HOME:$DOMINION_LIBRARY
+
