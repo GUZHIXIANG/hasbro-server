@@ -29,13 +29,13 @@ class Address(models.Model):
     # 手机号
     mobile = models.CharField(
         verbose_name='手机号', max_length=20, blank=True)
-    # 省份
+    # 关联地区 ----- 省份
     province = models.ForeignKey(
         Area, on_delete=models.SET_NULL)
-    # 城市
+    # 关联地区 ----- 城市
     city = models.ForeignKey(
         Area, on_delete=models.SET_NULL)
-    # 区域
+    # 关联地区 ----- 区域
     district = models.ForeignKey(
         Area, on_delete=models.SET_NULL)
     # 详细地址
