@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 每层view文件必须import
 from wechatapp.views import *
 
@@ -8,29 +9,29 @@ from wechatapp.serializers.AddressSerializer import *
 
 class address(APIView):
     '''地址创建/修改'''
-    @swagger_auto_schema(
-        operation_description="小程序用户地址创建/修改接口",
-        manual_parameters=[
-            openapi.Parameter("address_id", openapi.IN_QUERY, 
-            description="地址ID",
-            type=openapi.TYPE_INTEGER)
-        ],
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=["name","mobile","province","city","district","address","is_default"],
-            properties={
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
-                'mobile': openapi.Schema(type=openapi.TYPE_STRING),
-                'province': openapi.Schema(type=openapi.TYPE_STRING),
-                "city": openapi.Schema(type=openapi.TYPE_STRING),
-                "district": openapi.Schema(type=openapi.TYPE_STRING),
-                "address": openapi.Schema(type=openapi.TYPE_STRING),
-                "is_default": openapi.Schema(type=openapi.TYPE_NUMBER),
-            },
-        ),
-        responses={200: ""},
-        security=[]
-    )
+    # @swagger_auto_schema(
+    #     operation_description="小程序用户地址创建/修改接口",
+    #     manual_parameters=[
+    #         openapi.Parameter("address_id", openapi.IN_QUERY, 
+    #         description="地址ID",
+    #         type=openapi.TYPE_INTEGER)
+    #     ],
+    #     request_body=openapi.Schema(
+    #         type=openapi.TYPE_OBJECT,
+    #         required=["name","mobile","province_id","city_id","district_id","address","is_default"],
+    #         properties={
+    #             'name': openapi.Schema(type=openapi.TYPE_STRING),
+    #             'mobile': openapi.Schema(type=openapi.TYPE_STRING),
+    #             'province_id': openapi.Schema(type=openapi.TYPE_STRING),
+    #             "city_id": openapi.Schema(type=openapi.TYPE_STRING),
+    #             "district_id": openapi.Schema(type=openapi.TYPE_STRING),
+    #             "address": openapi.Schema(type=openapi.TYPE_STRING),
+    #             "is_default": openapi.Schema(type=openapi.TYPE_NUMBER),
+    #         },
+    #     ),
+    #     responses={200: ""},
+    #     security=[]
+    # )
     def post(self, request, format=None):
         if request.method == "POST": # 验证请求方式
             # 获取用户key
@@ -43,17 +44,21 @@ class address(APIView):
             else:
                 message = "请登录"
                 return Response().errorMessage(error="login requried",status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,message=message)
-            try: # 验证是否为修改
-                address_id = request.data.get('address_id')
+            address_id = data.get('id')
+            data['province'] = data.pop('province_id')
+            data['city'] = data.pop('city_id')
+            data['district'] = data.pop('district_id')
+            if address_id == 0:
+                address_serializer = AddressSerializer(
+                    data=data, partial=True)
+            else:
                 if Address.objects.filter(id=address_id).exists():
                     address = Address.objects.get(id=address_id)
-                    address_serializer = AddressSerializer(instance=address, data=request.data, partial=True)
+                    address_serializer = AddressSerializer(
+                        instance=address, data=data, partial=True)
                 else:  # 资源不存在异常
                     message = "未找到指定资源"
                     return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
-            except Exception as e:
-                address_serializer = AddressSerializer(
-                data=request.data, partial=True)
             if address_serializer.is_valid(): # 验证数据是否合法
                 address_serializer.validated_data
                 address_serializer.save()
@@ -87,7 +92,7 @@ class address(APIView):
             else:
                 message = "请登录"
                 return Response().errorMessage(error="login requried",status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,message=message)
-            address_id = request.data.get('address_id')
+            address_id = request.GET.get('id')
             # 删除操作
             if Address.objects.filter(id=address_id).exists(): # 验证资源是否存在
                 Address.objects.get(id=address_id).delete()
@@ -117,13 +122,22 @@ class address(APIView):
             else:
                 message = "请登录"
                 return Response().errorMessage(error="login requried",status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,message=message)
-            if Address.objects.filter().exists(): # 验证资源是否存在
-                addresses = Address.objects.all()
-                address_serializer = StoreSerializer(
+            if Address.objects.filter(user=user.id).exists():  # 验证资源是否存在
+                addresses = Address.objects.filter(user=user.id)
+                address_serializer = AddressDetailSerializer(
                     addresses, many=True)
+                data = address_serializer.data.copy()
+                data_new = []
+                for d in data:
+                    d['province_id'] = d.pop('province')
+                    d['city_id'] = d.pop('city')
+                    d['district_id'] = d.pop('district')
+                    d['full_region'] = ''.join(
+                        [d.pop('province_name'), d.pop('city_name'), d.pop('district_name')])
+                    data_new.append(d)
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
-                                                message=message, data=address_serializer.data)
+                                                 message=message, data=data_new)
             else:  # 资源不存在异常
                 message = "未找到指定资源"
                 return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
@@ -134,14 +148,14 @@ class address(APIView):
 
 class address_detail(APIView):
     '''地址详情查询'''
-    @swagger_auto_schema(
-        operation_description="小程序用户地址详情显示接口",
-        manual_parameters=[
-            openapi.Parameter("address_id", openapi.IN_QUERY, description="地址ID",type=openapi.TYPE_STRING),
-        ],
-        responses={200: "success"},
-        security=[]
-    )
+    # @swagger_auto_schema(
+    #     operation_description="小程序用户地址详情显示接口",
+    #     manual_parameters=[
+    #         openapi.Parameter("address_id", openapi.IN_QUERY, description="地址ID",type=openapi.TYPE_STRING),
+    #     ],
+    #     responses={200: "success"},
+    #     security=[]
+    # )
     def get(self,request,format=None):
         if request.method == 'GET': # 验证请求方式
             # 获取用户key
@@ -152,13 +166,20 @@ class address_detail(APIView):
             else:
                 message = "请登录"
                 return Response().errorMessage(error="login requried",status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,message=message)
-            address_id = request.data.get('address_id')
+            address_id = request.GET.get('id')
+            address_id = int(address_id)
             if Address.objects.filter(id=address_id).exists(): # 验证资源是否存在
-                address = Address.objects.get(id=address_id).get()
+                address = Address.objects.get(id=address_id)
                 address_serializer = AddressDetailSerializer(address)
+                data = address_serializer.data.copy()
+                data['province_id'] = data.pop('province')
+                data['city_id'] = data.pop('city')
+                data['district_id'] = data.pop('district')
+                data['full_region'] = ''.join(
+                    [data.pop('province_name'), data.pop('city_name'), data.pop('district_name')])
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
-                                                message=message, data=address_serializer.data)
+                                                message=message, data=data)
             else: # 资源不存在异常
                 message = "未找到指定资源"
                 return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
@@ -220,11 +241,40 @@ class area_view2(APIView):
     def get(self, request, format=None):
         if request.method == "GET":  # 验证请求方式
             parent_id = request.GET.get('parent_id')
+            if Areas.objects.filter(parent_id=parent_id).exists():
+                areas = Areas.objects.filter(parent_id=parent_id)
+                areas_serializer = AreaSerializer(
+                    areas, many=True)
+                message = "查询成功"
+                return Response().successMessage(status=status.HTTP_200_OK,message=message, data=areas_serializer.data)
+            else:  # 资源不存在异常
+                message = "未找到指定资源"
+                return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
+        else:  # 请求方式异常
+            message = "请求方式错误"
+            return Response().successMessage(status=status.HTTP_405_METHOD_NOT_ALLOWED, message=message)
+
+
+class area_view3(APIView):
+    '''活动详情查询'''
+    @swagger_auto_schema(
+        operation_description="省市区信息查询接口",
+        manual_parameters=[
+            openapi.Parameter("parent_id", openapi.IN_QUERY, description="父ID",
+                              type=openapi.TYPE_STRING),
+        ],
+        responses={200: "success"
+                   },
+        security=[]
+    )
+    def get(self, request, format=None):
+        if request.method == "GET":  # 验证请求方式
+            parent_id = request.GET.get('parent_id')
             try:
                 path = JSONFILES_FOLDER + "areas.json"
                 with open(path, 'r') as f:
                     areas = json.loads(f.read())
-                areas = [x for x in areas if x['parent_id']==parent_id]
+                areas = [x for x in areas if x['parent_id'] == parent_id]
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
                                                  message=message, data=areas)

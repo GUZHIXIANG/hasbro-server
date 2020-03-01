@@ -15,7 +15,7 @@ class Areas(models.Model):
         verbose_name = 'Areas'
         verbose_name_plural = '行政区划表'
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 

@@ -8,17 +8,17 @@ class AddressDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Address
-        fields = ("name","mobile","province","province_name","city","city_name","district","district_name","address","is_default")
+        fields = ("id", "name", "mobile", "province", "city", "district",
+                  "province_name", "city_name", "district_name", "address", "is_default")
 
 
 class AddressSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Address
-        fields = ("user","name","mobile","province","city","district","address","is_default")
+        fields = ("id","user","name","mobile","province","city","district","address","is_default")
     
     def create(self,validate_data):
-        Address.objects.create(**validate_data)
+        return Address.objects.create(**validate_data)
     
     def update(self, instance, validated_data):
         for item in validated_data:
@@ -26,3 +26,9 @@ class AddressSerializer(serializers.ModelSerializer):
                 setattr(instance, item, validated_data[item])
         instance.save()
         return instance
+
+
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Areas
+        fields = '__all__'
