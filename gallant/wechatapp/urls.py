@@ -3,7 +3,7 @@ from wechatapp.views.UserManager import user_register
 from wechatapp.views.SignUpManager import *
 from wechatapp.views.ActivityManager import *
 from wechatapp.views.StoreManager import *
-from wechatapp.views.AddressManger import *
+from wechatapp.views.AddressManager import *
 from wechatapp.views.ProductsInfoManager import items,itemtype,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
 from wechatapp.views.TrollyManager import trolly,trollynum,trollycheckbox
 from wechatapp.views.SearchManager import itemSearch
@@ -78,5 +78,9 @@ urlpatterns = [
      # 省市区查询
      path('areas', area_view.as_view(), name='areas'),
      path('areas/area2', area_view2.as_view(), name='areas2'),
+
+     # 地址管理
+     path('address', address.as_view(), name='address'),
+     path('address/detail', address_detail.as_view(), name='address_detail'),
 
 ]  
