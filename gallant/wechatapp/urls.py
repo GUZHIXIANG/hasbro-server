@@ -6,7 +6,7 @@ from wechatapp.views.StoreManager import *
 from wechatapp.views.AddressManager import *
 from wechatapp.views.ProductsInfoManager import items,itemtype,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
 from wechatapp.views.TrollyManager import trolly,trollynum,trollycheckbox
-from wechatapp.views.SearchManager import itemSearch
+from wechatapp.views.SearchManager import itemSearch,typeForItem
 
 urlpatterns = [
 
@@ -74,10 +74,11 @@ urlpatterns = [
 
      # 搜索查询
      path('search/items', itemSearch.as_view(), name='search'),
+     path('search/typeForItem', typeForItem.as_view(), name='typeForItem'),
 
      # 省市区查询
      path('areas', area_view.as_view(), name='areas'),
-     path('areas/area2', area_view2.as_view(), name='areas2'),
+     path('areas2', area_view2.as_view(), name='areas2'),
 
      # 地址管理
      path('address', address.as_view(), name='address'),

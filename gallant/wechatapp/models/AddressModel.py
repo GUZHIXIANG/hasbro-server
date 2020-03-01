@@ -42,9 +42,9 @@ class Address(models.Model):
     address = models.CharField(
         verbose_name='详细地址', max_length=256, blank=True)
     # 默认设置
-    CHOICE_TYPE = ((0,'否'),(1,'是'))
-    is_default = models.IntegerField(
-        verbose_name='默认设置',choices=CHOICE_TYPE, default=0)
+    CHOICE_TYPE = ((False,'否'),(True,'是'))
+    is_default = models.BooleanField(
+        verbose_name='默认设置',choices=CHOICE_TYPE, default=False)
     # 创建时间
     signup_create_time = models.DateTimeField(
         verbose_name='创建时间', auto_now_add=True)
