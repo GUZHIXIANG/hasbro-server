@@ -32,24 +32,68 @@ class itemtype(APIView):
             return Response().successMessage(status=status.HTTP_201_CREATED)
         return Response().errorMessage(error="error",status=status.HTTP_406_NOT_ACCEPTABLE)
 
+    
+    
+    
+    
     @swagger_auto_schema(
     operation_description="获取商品类别列表",
     manual_parameters=[
         openapi.Parameter("list", openapi.IN_QUERY, description="test manual param",
                                    type=openapi.TYPE_STRING),
+        openapi.Parameter("level", openapi.IN_QUERY, description="test manual param",
+                                   type=openapi.TYPE_STRING),
+        
     ],
     responses={200:"success"
     },
     security=[]
     )
     def get(self,request,format=None):
-        flag = request.GET['list']
-        if flag == "all":
-            productType = ProductType.objects.all()
-            serializer = ProductTypeSerializer(productType,many=True)
-            return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
-        return Response().errorMessage(error="错误的参数请求",status=status.HTTP_200_OK)
 
+        productType = ProductType.objects.all()
+        typeName_list = []
+        typeChildName_list = []
+
+        for i in productType:
+            typeName_list.append(i.typeName)
+    
+           
+        typeName_list = list(set(typeName_list))
+       
+        
+        typeName_list = [{"name":i} for i in typeName_list ]
+        
+        
+        flag = request.GET['list']
+        level = request.GET['level']
+        
+            
+        
+        if flag == "all" and level == "null":
+            return Response().successMessage({"typeName":typeName_list},status=status.HTTP_200_OK)
+        
+        elif flag != "all" and flag !=None and level == "null":  #and level1 != None and level2 != None:
+            
+            productType = ProductType.objects.filter(typeName=flag)
+            for i in productType:
+                typeChildName_list.append(i.typeChildName)
+            typeChildName_list = list(set(typeChildName_list))
+            typeChildName_list = [{"name":i} for i in typeChildName_list ]
+            
+            return Response().successMessage({"typeName":typeChildName_list},status=status.HTTP_200_OK)
+
+        elif flag != "all" and flag !=None and level != "null": 
+            productType = ProductType.objects.filter(typeName=flag).filter(typeChildName=level)
+            ser = ProductTypeSerializer(productType,many=True)
+            return Response().successMessage(ser.data,status=status.HTTP_200_OK)
+        
+        else:
+            return Response().errorMessage(error="错误的参数请求",status=status.HTTP_200_OK)
+
+    
+    
+    
     
     @swagger_auto_schema(
     operation_description="获取商品类别列表",

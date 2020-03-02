@@ -35,3 +35,23 @@ class itemSearch(APIView):
         product = ProductBaseInfo.objects.filter(productName__icontains=keyword)
         serializer = ProductSerializer(product,many=True)
         return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
+
+
+class typeForItem(APIView):
+
+    @swagger_auto_schema(
+    operation_description="更具商品类别获取商品类型",
+    manual_parameters=[
+        openapi.Parameter("productType", openapi.IN_QUERY, description="获取商品详情信息",
+                                   type=openapi.TYPE_INTEGER),
+    ],
+    responses={200:"success"
+    },
+    security=[]
+    )
+    def get(self, request, format=None):
+
+        productType = request.GET['productType']
+        product = ProductBaseInfo.objects.filter(productType=productType)
+        serializer = ProductSerializer(product,many=True)
+        return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
