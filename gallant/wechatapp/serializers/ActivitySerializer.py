@@ -14,6 +14,11 @@ class ActivityImageSerializer(serializers.ModelSerializer):
         model = ActivityImage
         fields = ('image', 'image_type')
 
+class ActivityTextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityText
+        fields = ('title', 'text')
+
 
 class ActivitySerializer(serializers.ModelSerializer):
     activity_start_datetime = serializers.DateTimeField(
@@ -48,6 +53,7 @@ class ActivityDetailSerializer(serializers.ModelSerializer):
     #     source='super_activity.activity_name')
 
     activity_image = serializers.SerializerMethodField()
+    activity_text = serializers.SerializerMethodField()
     activity_store = serializers.SerializerMethodField()
 
     class Meta:
@@ -57,15 +63,21 @@ class ActivityDetailSerializer(serializers.ModelSerializer):
     def get_activity_image(self, obj):
         query_set = obj.activity_image.all()
         return [{'image': obj.image, 'image_type': obj.get_image_type_display()} for obj in query_set]
+    
+    def get_activity_text(self, obj):
+        query_set = obj.activity_text.all()
+        return [{'title': obj.title, 'text': obj.text} for obj in query_set]
 
     def get_activity_store(self, obj):
         query_set = obj.activity_store.all()
-        return [{'store_id': obj.id, 'store_name': obj.store_name} for obj in query_set]
+        return [{'store_id': obj.id, 'store_name': obj.store_name, 
+        'store_area': obj.store_area,'store_address': obj.store_address, 'store_telephone': obj.store_telephone,} for obj in query_set]
  
 
 class ActivityCreateSerializer(serializers.ModelSerializer):
     activity_store = ActivityStoreSerializer(many=True, partial=True)
     activity_image = ActivityImageSerializer(many=True, partial=True)
+    activity_text = ActivityTextSerializer(many=True, partial=True)
     super_activity = serializers.IntegerField(required=False)
     class Meta:
         model = Activity
@@ -77,13 +89,16 @@ class ActivityCreateSerializer(serializers.ModelSerializer):
                   "activity_end_datetime",
                   "super_activity",
                   "activity_store",
-                  "activity_image")
+                  "activity_image",
+                  "activity_text")
 
     def create(self, validated_data):
         store_data = validated_data.pop(
             'activity_store') if 'activity_store' in validated_data else None
         image_data = validated_data.pop(
             'activity_image') if 'activity_image' in validated_data else None
+        text_data = validated_data.pop(
+            'activity_text') if 'activity_text' in validated_data else None
         # 活动信息
         activity = Activity.objects.create(**validated_data)
         # 关联门店
@@ -103,12 +118,26 @@ class ActivityCreateSerializer(serializers.ModelSerializer):
                     image=d['image'],
                     image_type=d['image_type']
                     )
+
+        # 关联文本
+        if text_data:
+            for text in text_data:
+                d = dict(text)
+                ActivityText.objects.create(
+                    activity=activity, 
+                    title=d['title'],
+                    text=d['text']
+                    )
+
         return activity
+
+
 
 
 class ActivityUpdateSerializer(serializers.ModelSerializer):
     activity_store = ActivityStoreSerializer(many=True, partial=True)
     activity_image = ActivityImageSerializer(many=True, partial=True)
+    activity_text = ActivityTextSerializer(many=True, partial=True)
     class Meta:
         model = Activity
         fields = ("activity_name",
@@ -118,13 +147,16 @@ class ActivityUpdateSerializer(serializers.ModelSerializer):
                   "activity_end_datetime", 
                   "super_activity",
                   "activity_store",
-                  "activity_image")
+                  "activity_image",
+                  "activity_text")
 
     def update(self, instance, validated_data):
         store_data = validated_data.pop(
             'activity_store') if 'activity_store' in validated_data else None
         image_data = validated_data.pop(
             'activity_image') if 'activity_image' in validated_data else None
+        image_text = validated_data.pop(
+            'activity_text') if 'activity_text' in validated_data else None
         # 活动信息
         for item in validated_data:
             if Activity._meta.get_field(item):
@@ -149,6 +181,16 @@ class ActivityUpdateSerializer(serializers.ModelSerializer):
                     image=d['image'],
                     image_type=d['image_type']
                 )
+
+        # 关联文本
+        if text_data:
+            for text in text_data:
+                d = dict(text)
+                ActivityText.objects.create(
+                    activity=activity, 
+                    title=d['title'],
+                    text=d['text']
+                    )
         
         instance.save()
         return instance
