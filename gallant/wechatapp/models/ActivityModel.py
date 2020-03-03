@@ -14,7 +14,7 @@ class Activity(models.Model):
         Store, through='ActivityStore', related_name='activity_store')
     # 活动名
     activity_name = models.CharField(
-        verbose_name='活动名', max_length=255,unique=True)
+        verbose_name='活动名', max_length=100,unique=True)
     # 活动描述
     activity_descripation = models.TextField(verbose_name='活动描述', blank=True)
     # 活动开始时间
@@ -83,3 +83,22 @@ class ActivityImage(models.Model):
         app_label = 'wechatapp'
         verbose_name = 'ActivityImage'
         verbose_name_plural = '活动图片表'
+
+
+# 活动文本表
+class ActivityText(models.Model):
+    # 关联活动 ----- 关联活动基础表
+    activity = models.ForeignKey('Activity',on_delete=models.CASCADE,related_name='activity_text')
+    # 文本标题
+    title = models.CharField(
+        verbose_name='文本标题', max_length=100,unique=True)
+    # 文本正文
+    text = models.TextField(verbose_name='文本正文', blank=True)
+
+    def __str__(self):
+        return self.title.__str__()
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = 'ActivityText'
+        verbose_name_plural = '活动文本表'
