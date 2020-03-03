@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from wechatapp.models.StoreModel import Store
 
 # 活动信息表
@@ -19,10 +20,10 @@ class Activity(models.Model):
     activity_descripation = models.TextField(verbose_name='活动描述', blank=True)
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
-        verbose_name='活动开始时间', auto_now_add=True)
+        verbose_name='活动开始时间', default=timezone.now(),help_text=('年-月-日 时:分:秒'))
     # 活动结束时间
     activity_end_datetime = models.DateTimeField(
-        verbose_name='活动结束时间', auto_now_add=True)
+        verbose_name='活动结束时间', default=timezone.now(),help_text=('年-月-日 时:分:秒'))
     # 创建时间
     activity_create_time = models.DateTimeField(verbose_name='创建时间',auto_now_add=True)
     # 操作时间

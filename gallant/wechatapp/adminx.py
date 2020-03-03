@@ -2,7 +2,8 @@ import xadmin
 from xadmin import views
 
 from .models.UserModel import UserProfile
-from .models.ProductModel import ProductType,ProductBaseInfo,ProductUrl,ProductTag
+from .models.ProductTypeModel import ProductMainCategory,ProductSecondCategory,ProductType
+from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
 
@@ -35,9 +36,19 @@ xadmin.site.register(UserProfile,UserProfileAdmin)
 
 
 # 商品类别管理
+
+class ProductMainCategoryAdmin(object):
+    list_display = ('id', 'typeName')
+xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
+
+class ProductSecondCategoryAdmin(object):
+    list_display = ('id', 'typeName','typeChildName','image_img')
+xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
+
 class ProductTypeAdmin(object):
-    list_display = ('id', 'typeName','typeChildName','typeChildsName')
+    list_display = ('id', 'typeChildName','typeChildsName','image_img')
 xadmin.site.register(ProductType,ProductTypeAdmin)
+
 
 # 商品详情况管理
 class ProductBaseInfoAdmin(object):
