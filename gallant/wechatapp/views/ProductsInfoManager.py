@@ -369,10 +369,15 @@ class homepage(APIView):
         advpic = AdvPicModel.objects.all()
         rollAdvPic = AdvPicSerializer(advpic,many=True)
 
+        goodsCount = ProductBaseInfo.objects.all()
+        goodsCount = len(goodsCount)
+        
+        
         return Response().successMessage({"hotgoods":hotgoods.data,
                                           "newgoods":newgoods.data,
                                           "discountgoods":discountgoods.data,
-                                          "rollAdvPic":rollAdvPic.data
+                                          "rollAdvPic":rollAdvPic.data,
+                                          "goodsCount":goodsCount
                                         },status=status.HTTP_200_OK)
     
 class itemsdetail(APIView):
