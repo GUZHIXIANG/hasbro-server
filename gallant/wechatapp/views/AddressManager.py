@@ -48,6 +48,10 @@ class address(APIView):
             data['province'] = data.pop('province_id')
             data['city'] = data.pop('city_id')
             data['district'] = data.pop('district_id')
+            if data.get('is_default')==True:
+                old_address = Address.objects.filter(user=user.id)
+                if old_address.exists():
+                    old_address.update(is_default=False)
             if address_id == 0:
                 address_serializer = AddressSerializer(
                     data=data, partial=True)
