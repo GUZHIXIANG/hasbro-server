@@ -32,6 +32,13 @@ class activity_create(APIView):
                                              'image': openapi.Schema(type=openapi.TYPE_STRING),
                                              'image_type': openapi.Schema(type=openapi.TYPE_INTEGER),
                                          })),
+                "activity_text": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(type=openapi.TYPE_OBJECT,
+                                         properties={
+                                             'title': openapi.Schema(type=openapi.TYPE_STRING),
+                                             'text': openapi.Schema(type=openapi.TYPE_STRING),
+                                         })),   
             },
         ),
         responses={200: ""},
@@ -109,6 +116,13 @@ class activity_update(APIView):
                                              'image': openapi.Schema(type=openapi.TYPE_STRING),
                                              'image_type': openapi.Schema(type=openapi.TYPE_INTEGER),
                                          })),
+                "activity_text": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(type=openapi.TYPE_OBJECT,
+                                         properties={
+                                             'title': openapi.Schema(type=openapi.TYPE_STRING),
+                                             'text': openapi.Schema(type=openapi.TYPE_STRING),
+                                         })),
             },
         ),
         responses={200: ""},
@@ -173,7 +187,7 @@ class activitydetail_view(APIView):
         operation_description="小程序用户活动详情显示接口",
         manual_parameters=[
             openapi.Parameter("activity_id", openapi.IN_QUERY, description="活动ID",
-                              type=openapi.TYPE_STRING),
+                              type=openapi.TYPE_INTEGER),
         ],
         responses={200: "success"
                    },
