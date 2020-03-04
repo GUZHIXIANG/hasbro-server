@@ -13,6 +13,7 @@ class AddressDetailSerializer(serializers.ModelSerializer):
 
 
 class AddressSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Address
         fields = ("id","user","name","mobile","province","city","district","address","is_default")

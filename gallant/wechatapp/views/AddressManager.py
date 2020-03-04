@@ -138,7 +138,7 @@ class address(APIView):
                     d['city_id'] = d.pop('city')
                     d['district_id'] = d.pop('district')
                     d['full_region'] = ''.join(
-                        [d.pop('province_name'), d.pop('city_name'), d.pop('district_name')])
+                        [d.get('province_name'), d.get('city_name'), d.get('district_name')])
                     data_new.append(d)
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
@@ -181,7 +181,7 @@ class address_detail(APIView):
                 data['city_id'] = data.pop('city')
                 data['district_id'] = data.pop('district')
                 data['full_region'] = ''.join(
-                    [data.pop('province_name'), data.pop('city_name'), data.pop('district_name')])
+                    [data.get('province_name'), data.get('city_name'), data.get('district_name')])
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
                                                 message=message, data=data)
