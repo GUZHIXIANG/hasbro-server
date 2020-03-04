@@ -1,186 +1,77 @@
+from django.db import transaction
+import xlrd
 from wechatapp.views import *
+
 # 模型
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductType,ProductTag)
-# 序列器
-from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTypeSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
-
-from wechatapp.serializers.AdvSeralizer import AdvPicSerializer
+from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag)
+from wechatapp.models.ProductTypeModel import ProductType,ProductSecondCategory,ProductMainCategory
 from wechatapp.models.AdvModel import AdvPicModel
-
-class itemtype(APIView):
-    """
-    商品类别管理接口
-    """
-    @swagger_auto_schema(
-    operation_description="添加商品分类借口",
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        required=['typeName'],
-        properties={
-            'typeName': openapi.Schema(type=openapi.TYPE_STRING),
-        },
-    ),
-    responses={201:"创建成功",
-               406:"重复不接受创建"},
-    security=[]
-    )
-    def post(self,request,format=None):
-
-        serializer = ProductTypeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response().successMessage(status=status.HTTP_201_CREATED)
-        return Response().errorMessage(error="error",status=status.HTTP_406_NOT_ACCEPTABLE)
-
-    
-    
-    
-    
-    @swagger_auto_schema(
-    operation_description="获取商品类别列表",
-    manual_parameters=[
-        openapi.Parameter("list", openapi.IN_QUERY, description="test manual param",
-                                   type=openapi.TYPE_STRING),
-        openapi.Parameter("level", openapi.IN_QUERY, description="test manual param",
-                                   type=openapi.TYPE_STRING),
-        
-    ],
-    responses={200:"success"
-    },
-    security=[]
-    )
-    def get(self,request,format=None):
-
-        productType = ProductType.objects.all()
-        typeName_list = []
-        typeChildName_list = []
-
-        for i in productType:
-            typeName_list.append(i.typeName)
-    
-           
-        typeName_list = list(set(typeName_list))
-       
-        
-        typeName_list = [{"name":i} for i in typeName_list ]
-        
-        
-        flag = request.GET['list']
-        level = request.GET['level']
-        
-            
-        
-        if flag == "all" and level == "null":
-            return Response().successMessage({"typeName":typeName_list},status=status.HTTP_200_OK)
-        
-        elif flag != "all" and flag !=None and level == "null":  #and level1 != None and level2 != None:
-            
-            productType = ProductType.objects.filter(typeName=flag)
-            for i in productType:
-                typeChildName_list.append(i.typeChildName)
-            typeChildName_list = list(set(typeChildName_list))
-            typeChildName_list = [{"name":i} for i in typeChildName_list ]
-            
-            return Response().successMessage({"typeName":typeChildName_list},status=status.HTTP_200_OK)
-
-        elif flag != "all" and flag !=None and level != "null": 
-            productType = ProductType.objects.filter(typeName=flag).filter(typeChildName=level)
-            ser = ProductTypeSerializer(productType,many=True)
-            return Response().successMessage(ser.data,status=status.HTTP_200_OK)
-        
-        else:
-            return Response().errorMessage(error="错误的参数请求",status=status.HTTP_200_OK)
-
-    
-    
-    
-    
-    @swagger_auto_schema(
-    operation_description="获取商品类别列表",
-    manual_parameters=[
-        openapi.Parameter("id", openapi.IN_QUERY, description="test manual param",
-                                   type=openapi.TYPE_INTEGER),
-    ],
-    responses={404:"找不到数据",
-               200:"删除成功",
-    },
-    security=[]
-    )
-    def delete(self,request,format=None):
-
-        mid = request.GET['id']
-        try:
-            pt = ProductType.objects.get(id=mid)
-        except:
-            return Response().errorMessage(error="id={},数据不存在".format(mid),status=status.HTTP_404_NOT_FOUND)
-
-        serializer = ProductTypeSerializer(instance=pt)
-        pt.delete()
-        return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
-
-
+# 序列器
+from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
+from wechatapp.serializers.AdvSeralizer import AdvPicSerializer
+from wechatapp.serializers.TypeSerializer import ProductSecondCategorySerializer
 
 class items(APIView):
     """
     商品信息相关的接口
     """
 
-    @swagger_auto_schema(
-    operation_description="添加商品分类借口",
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        required=['productId','productName','productType','price'],
-        properties={
-            'productId': openapi.Schema(type=openapi.TYPE_STRING),
-            'productName': openapi.Schema(type=openapi.TYPE_STRING),
-            'productType':openapi.Schema(type=openapi.TYPE_STRING),
-            'systemCode': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'barCode': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'color': openapi.Schema(type=openapi.TYPE_STRING),
-            'norms': openapi.Schema(type=openapi.TYPE_STRING),
-            'weight': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'price': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'descripation': openapi.Schema(type=openapi.TYPE_STRING),
-            'quantity': openapi.Schema(type=openapi.TYPE_INTEGER),  
-            'shell': openapi.Schema(type=openapi.TYPE_STRING),  
-        },
-    ),
-    responses={201:"创建成功",
-               },
-    security=[]
-    )
-    def post(self, request, format=None):
+    # @swagger_auto_schema(
+    # operation_description="添加商品分类借口",
+    # request_body=openapi.Schema(
+    #     type=openapi.TYPE_OBJECT,
+    #     required=['productId','productName','productType','price'],
+        # properties={
+        #     'productId': openapi.Schema(type=openapi.TYPE_STRING),
+        #     'productName': openapi.Schema(type=openapi.TYPE_STRING),
+        #     'productType':openapi.Schema(type=openapi.TYPE_STRING),
+        #     'systemCode': openapi.Schema(type=openapi.TYPE_INTEGER),
+        #     'barCode': openapi.Schema(type=openapi.TYPE_INTEGER),
+        #     'color': openapi.Schema(type=openapi.TYPE_STRING),
+        #     'norms': openapi.Schema(type=openapi.TYPE_STRING),
+        #     'weight': openapi.Schema(type=openapi.TYPE_INTEGER),
+        #     'price': openapi.Schema(type=openapi.TYPE_INTEGER),
+        #     'descripation': openapi.Schema(type=openapi.TYPE_STRING),
+        #     'quantity': openapi.Schema(type=openapi.TYPE_INTEGER),  
+        #     'shell': openapi.Schema(type=openapi.TYPE_STRING),  
+        # },
+    # ),
+    # responses={201:"创建成功",
+    #            },
+    # security=[]
+    # )
+    # def post(self, request, format=None):
         
-        productId = request.data.get('productId')
-        productName = request.data.get('productName')
-        productType = request.data.get('productType')
-        systemCode = request.data.get('systemCode')
-        barCode = request.data.get('barCode')
-        color = request.data.get('color')
-        norms = request.data.get('norms')
-        weight = request.data.get('weight')
-        price = request.data.get('price')
-        descripation = request.data.get('descripation')
+    #     productId = request.data.get('productId')
+    #     productName = request.data.get('productName')
+    #     productType = request.data.get('productType')
+    #     systemCode = request.data.get('systemCode')
+    #     barCode = request.data.get('barCode')
+    #     color = request.data.get('color')
+    #     norms = request.data.get('norms')
+    #     weight = request.data.get('weight')
+    #     price = request.data.get('price')
+    #     descripation = request.data.get('descripation')
 
         
-        try:
-            ptype = ProductType.objects.get(typeName=productType)
-            product = ProductBaseInfo(productType=ptype,
-            productId=productId,
-            productName=productName,
-            systemCode=systemCode,
-            barCode=barCode,
-            color=color,
-            norms=norms,
-            weight=weight,
-            price=price,
-            descripation=descripation
-            )
-            product.save()
-            return Response().successMessage(status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response().errorMessage(error="无法保存",status=status.HTTP_400_BAD_REQUEST)
+    #     try:
+    #         ptype = ProductType.objects.get(typeName=productType)
+    #         product = ProductBaseInfo(productType=ptype,
+    #         productId=productId,
+    #         productName=productName,
+    #         systemCode=systemCode,
+    #         barCode=barCode,
+    #         color=color,
+    #         norms=norms,
+    #         weight=weight,
+    #         price=price,
+    #         descripation=descripation
+    #         )
+    #         product.save()
+    #         return Response().successMessage(status=status.HTTP_200_OK)
+    #     except Exception as e:
+    #         print(e)
+    #         return Response().errorMessage(error="无法保存",status=status.HTTP_400_BAD_REQUEST)
 
     
     @swagger_auto_schema(
@@ -358,18 +249,19 @@ class homepage(APIView):
     )
     def get(self, request, format=None):
 
+        # 首页信息
+        type_list = ProductSecondCategory.objects.all() 
+        advpic = AdvPicModel.objects.all()
         tag_hot = ProductBaseInfo.objects.filter(producttag__tag__contains='h')
         tag_new = ProductBaseInfo.objects.filter(producttag__tag__contains='n')
         tag_discount = ProductBaseInfo.objects.filter(producttag__tag__contains='d')
+        goodsCount = ProductBaseInfo.objects.all()
         
+        rollAdvPic = AdvPicSerializer(advpic,many=True)
+        channel = ProductSecondCategorySerializer(type_list,many=True)
         hotgoods = ProductAllSerializer(tag_hot,many=True)
         newgoods = ProductAllSerializer(tag_new,many=True)
         discountgoods = ProductAllSerializer(tag_discount,many=True)
-        
-        advpic = AdvPicModel.objects.all()
-        rollAdvPic = AdvPicSerializer(advpic,many=True)
-
-        goodsCount = ProductBaseInfo.objects.all()
         goodsCount = len(goodsCount)
         
         
@@ -377,9 +269,10 @@ class homepage(APIView):
                                           "newgoods":newgoods.data,
                                           "discountgoods":discountgoods.data,
                                           "rollAdvPic":rollAdvPic.data,
+                                          "channel":channel.data,
                                           "goodsCount":goodsCount
                                         },status=status.HTTP_200_OK)
-    
+   
 class itemsdetail(APIView):
     @swagger_auto_schema(
     operation_description="获取商品详情页面",
@@ -415,3 +308,43 @@ class itemsdetail(APIView):
         
         return Response().successMessage(kiop,status=status.HTTP_200_OK)
 
+
+'''################## Excel批量导入 ##################'''
+
+class import_products_excel(APIView):
+
+    def post(self, request, format=None):
+        if request.method == "POST":  # 验证请求方式
+            excel_file = request.FILES.get('excel_file', '')
+            file_type = excel_file.name.split('.')[1]
+            if file_type in ['xlsx', 'xls']:   # 支持这两种文件格式
+                # 打开工作文件
+                data = xlrd.open_workbook(filename=None, file_contents=excel_file.read())
+                table = data.sheets()[0]
+                rows = table.nrows
+                try:
+                    with transaction.atomic():
+                        for row in range(1, rows):
+                            vals = table.row_values(row)
+                            ProductBaseInfo.objects.create(
+                                productId=vals[0],
+                                productName=vals[1],
+                                productType=vals[2],  # 关联
+                                systemCode=vals[3],
+                                barCode=vals[4],
+                                color=vals[5],
+                                norms=vals[6],
+                                weight=vals[7],
+                                price=vals[8],
+                                descripation=vals[9],
+                                brief=vals[10],
+                                brand=vals[11],
+                                shell=vals[12],
+                                quantity=vals[13],
+                            )
+                except:
+                    message = '解析excel文件或者数据插入错误'
+                    return Response().successMessage(status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, message=message)
+        else:  # 请求方式异常
+            message = "请求方式错误"
+            return Response().successMessage(status=status.HTTP_405_METHOD_NOT_ALLOWED, message=message)
