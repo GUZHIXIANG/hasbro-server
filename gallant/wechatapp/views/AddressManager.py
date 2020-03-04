@@ -87,9 +87,7 @@ class address(APIView):
         security=[]
     )
     def delete(self, request, format=None):
-        print('------------------------')
         if request.method == "DELETE":  # 验证请求方式
-            print('#################')
             # 获取用户key
             user_key = request.META.get("HTTP_SESSION_KEY")
             users = User.objects.filter(password=user_key)
