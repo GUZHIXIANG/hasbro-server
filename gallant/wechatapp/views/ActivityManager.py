@@ -173,9 +173,10 @@ class activity_view(APIView):
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
                                                 message=message, data=activitys_serializer.data)
-            else: # 资源不存在异常
-                message = "未找到指定资源"
-                return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
+            else: # 资源不存在
+                message = "无数据"
+                return Response().successMessage(status=status.HTTP_200_OK,
+                                                 message=message, data=[])
         else: # 请求方式异常
             message = "请求方式错误"
             return Response().successMessage(status=status.HTTP_405_METHOD_NOT_ALLOWED, message=message)

@@ -31,6 +31,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     #     source='super_activity.activity_name')
 
     activity_store = serializers.SerializerMethodField()
+    activity_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Activity
@@ -40,6 +41,10 @@ class ActivitySerializer(serializers.ModelSerializer):
     def get_activity_store(self, obj):
         query_set = obj.activity_store.all()
         return [{'store_name': obj.store_name} for obj in query_set]
+
+    def get_activity_image(self, obj):
+        query_set = obj.activity_image.all()
+        return [{'image': obj.image, 'image_type': obj.get_image_type_display()} for obj in query_set]
 
 
 class ActivityDetailSerializer(serializers.ModelSerializer):
