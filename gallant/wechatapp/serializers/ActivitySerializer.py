@@ -36,7 +36,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ("id", "activity_start_datetime", "activity_end_datetime",
-                  "activity_type", "activity_store", "activity_name", "super_activity")
+                  "activity_type", "activity_store", "activity_image", "activity_name", "super_activity")
     
     def get_activity_store(self, obj):
         query_set = obj.activity_store.all()
