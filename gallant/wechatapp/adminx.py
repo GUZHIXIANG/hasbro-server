@@ -1,5 +1,6 @@
 import xadmin
 from xadmin import views
+from django.contrib import admin
 
 from .models.UserModel import UserProfile
 from .models.ProductTypeModel import ProductMainCategory,ProductSecondCategory,ProductType
@@ -10,7 +11,7 @@ from .models.AdvModel import AdvPicModel
 from .models.ActivityModel import Activity,ActivityStore,ActivityType,ActivityImage
 from .models.SignUpModel import SignUp
 from .models.StoreModel import Store
-from .models.TestModel import Test
+from .models.TestModel import *
 
 from django.db import transaction
 import xlrd
@@ -76,9 +77,35 @@ class AdvPicAdmin(object):
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 
+# 临时后台用
+xadmin.site.register(Activity)
+xadmin.site.register(ActivityStore)
+xadmin.site.register(ActivityType)
+xadmin.site.register(ActivityImage)
+xadmin.site.register(SignUp)
+xadmin.site.register(Store)
+
+
+'''##########################################################################'''
+# 外键导入测试
+class TypeAdmin(object):
+    list_display = ('name','desc')
+xadmin.site.register(Type,TypeAdmin)
+    
+class Test2StackInline(object):
+    model = Test2
+    extra = 1
+
+
 # excel导入测试
 class TestAdmin(object):
-    list_display = ('name','age','sex')
+    list_display = ('name', 'age', 'sex','type')
+
+    def type(self, obj):
+        return obj.type.name
+    type.short_description = '类别'
+    
+    inlines = [Test2StackInline]
 
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']
@@ -111,10 +138,7 @@ class TestAdmin(object):
         return super(TestAdmin, self).post(request, args, kwargs)
 xadmin.site.register(Test, TestAdmin)
 
-# 临时后台用
-xadmin.site.register(Activity)
-xadmin.site.register(ActivityStore)
-xadmin.site.register(ActivityType)
-xadmin.site.register(ActivityImage)
-xadmin.site.register(SignUp)
-xadmin.site.register(Store)
+
+
+
+
