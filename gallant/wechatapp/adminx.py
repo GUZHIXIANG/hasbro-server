@@ -10,6 +10,10 @@ from .models.AdvModel import AdvPicModel
 from .models.ActivityModel import Activity,ActivityStore,ActivityType,ActivityImage
 from .models.SignUpModel import SignUp
 from .models.StoreModel import Store
+from .models.TestModel import Test
+
+from django.db import transaction
+import xlrd
 
 
 class BaseSetting(object):
@@ -42,7 +46,7 @@ class ProductMainCategoryAdmin(object):
 xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
 
 class ProductSecondCategoryAdmin(object):
-    list_display = ('id', 'typeName','typeChildName','image_img')
+    list_display = ('id', 'typeName','typeChildName','image_img','image_img1','banner_name')
 xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
 
 class ProductTypeAdmin(object):
@@ -70,6 +74,42 @@ xadmin.site.register(MyTrolly,MyTrollyAdmin)
 class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
+
+
+# excel导入测试
+class TestAdmin(object):
+    list_display = ('name','age','sex')
+
+    #excel导入导出功能
+    list_export = ['xls', 'xml', 'json']
+    import_excel = True
+
+    def post(self, request, *args, **kwargs):
+        #  导入逻辑
+        if 'excel' in request.FILES:
+            pass
+            excel_file = request.FILES.get('excel')
+            file_type = excel_file.name.split('.')[1]
+            if file_type in ['xlsx', 'xls']:   # 支持这两种文件格式
+                # 打开工作文件
+                data = xlrd.open_workbook(
+                    filename=None, file_contents=excel_file.read())
+                table = data.sheets()[0]
+                rows = table.nrows
+                try:
+                    with transaction.atomic():
+                        for row in range(1, rows):
+                            vals = table.row_values(row)
+                            CHOICE_dict = {'未知':0,'男':1,'女':2}
+                            Test.objects.create(
+                                name=vals[0],
+                                age=vals[1],
+                                sex=CHOICE_dict.get(vals[2])
+                            )
+                except Exception as e:
+                    return e
+        return super(TestAdmin, self).post(request, args, kwargs)
+xadmin.site.register(Test, TestAdmin)
 
 # 临时后台用
 xadmin.site.register(Activity)
