@@ -1,16 +1,11 @@
 from rest_framework import serializers
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductType,ProductTag)
+from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag)
 
-class ProductTypeSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProductType
-        fields = "__all__"
-    
+
 
 class ProductSerializer(serializers.ModelSerializer):
-
-    productType = ProductTypeSerializer()
+  
     class Meta:
         model = ProductBaseInfo
         fields = "__all__"

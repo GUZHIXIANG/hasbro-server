@@ -4,9 +4,11 @@ from wechatapp.views.SignUpManager import *
 from wechatapp.views.ActivityManager import *
 from wechatapp.views.StoreManager import *
 from wechatapp.views.AddressManager import *
-from wechatapp.views.ProductsInfoManager import items,itemtype,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
+from wechatapp.views.ProductsInfoManager import items,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
 from wechatapp.views.TrollyManager import trolly,trollynum,trollycheckbox
 from wechatapp.views.SearchManager import itemSearch,typeForItem
+from wechatapp.views.TypeManager import itemtype
+from wechatapp.views.CheckOutManager import checkOut
 
 urlpatterns = [
 
@@ -71,6 +73,10 @@ urlpatterns = [
      path('trolly/item', trolly.as_view(), name='trolly'),
      path('trolly/num', trollynum.as_view(), name='trolly'),
      path('trolly/checkbox', trollycheckbox.as_view(), name='trolly'),
+
+     # 订单相关信息
+     path('checkout/checked', checkOut.as_view(), name='checked'),
+     
 
      # 搜索查询
      path('search/items', itemSearch.as_view(), name='search'),

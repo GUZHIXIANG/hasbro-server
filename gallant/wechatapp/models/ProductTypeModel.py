@@ -26,7 +26,11 @@ class ProductSecondCategory(models.Model):
     typeChildName =  models.CharField('商品大类',max_length=50,blank=False)
 
     url = StdImageField(verbose_name="大类缩略图",upload_to='typea',variations={'nail': {'width': 10, 'height': 10}},default='')
+
+    banner_url = StdImageField(verbose_name="大类广告",upload_to='typeadv',default='')
     
+    banner_name = models.CharField('大类广告名称',max_length=50,blank=False,default='')
+
     def __str__(self):
         return "["+self.typeChildName.__str__()+"]"
 
@@ -40,9 +44,18 @@ class ProductSecondCategory(models.Model):
             return str('<img src="%s" />' % self.url.nail.url)
         else:
             return u'上传图片'
+    
+    def image_img1(self):
+        if self.banner_url:
+            return str('<img src="%s" />' % self.banner_url.url)
+        else:
+            return u'上传图片'
 
     image_img.short_description = '图标'
     image_img.allow_tags = True
+
+    image_img1.short_description = '广告'
+    image_img1.allow_tags = True
 
 class ProductType(models.Model):
     
@@ -68,5 +81,5 @@ class ProductType(models.Model):
         else:
             return u'上传图片'
 
-    image_img.short_description = '类别缩略图图'
+    image_img.short_description = '类别缩略图'
     image_img.allow_tags = True
