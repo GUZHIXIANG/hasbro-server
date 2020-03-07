@@ -74,6 +74,8 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 '''############### 商品信息管理 ###############'''
 '''##########################################'''
 
+
+@xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
     list_display = ('productId', 'productName', "image_img",
                     'productType', 'color', 'norms', 'price', 'quantity', 'shell')
@@ -120,13 +122,12 @@ class ProductBaseInfoAdmin(object):
                     return e
         return super(ProductBaseInfoAdmin, self).post(request, args, kwargs)
 
-xadmin.site.register(ProductBaseInfo, ProductBaseInfoAdmin)
-
-
 '''##########################################'''
 '''############### 报名信息查看 ###############'''
 '''##########################################'''
 
+
+@xadmin.sites.register(SignUp)
 class SignUpAdmin(object):
     list_display = ('user', 'activity', 'store', 'signup_name',
                     'signup_phone', 'signup_create_time', 'signup_operate_time')
@@ -141,29 +142,30 @@ class SignUpAdmin(object):
 
     def has_delete_permission(self,request=None):
         return False
-    
-xadmin.site.register(SignUp,SignUpAdmin)
 
 '''##########################################'''
 '''############### 门店信息管理 ###############'''
 '''##########################################'''
 
+
+@xadmin.sites.register(Store)
 class StoreAdmin(object):
     list_display = ('store_name', 'store_telephone',
                     'store_address', 'store_area')
     search_fields = ('store_name', 'store_telephone',
                      'store_address')
     list_filter = ('store_area',)
-xadmin.site.register(Store, StoreAdmin)
 
 '''##########################################'''
 '''############### 活动类型管理 ###############'''
 '''##########################################'''
 
+
+@xadmin.sites.register(ActivityType)
 class ATypeAdmin(object):
     list_display = ('activity_type', 'type_description')
     search_fields = ('activity_type',)
-xadmin.site.register(ActivityType, ATypeAdmin)
+
 
 '''##########################################'''
 '''############### 活动信息管理 ###############'''
@@ -177,6 +179,8 @@ class ATextStackInline(object):
     model = ActivityText
     extra = 1
 
+
+@xadmin.sites.register(Activity)
 class ActivityAdmin(object):
     list_display = ('activity_name',
                     'activity_type', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
@@ -188,5 +192,3 @@ class ActivityAdmin(object):
     style_fields = {'activity_store': 'm2m_transfer'}
     inlines = [AImageStackInline, ATextStackInline]  # 关联子表
 
-    save_as = True
-xadmin.site.register(Activity, ActivityAdmin)
