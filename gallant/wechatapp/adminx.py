@@ -54,11 +54,30 @@ class ProductTypeAdmin(object):
     list_display = ('id', 'typeChildName','typeChildsName','image_img')
 xadmin.site.register(ProductType,ProductTypeAdmin)
 
+class ProductUrlAdmin(object):
+    list_display = ('productbaseinfo','image_img','url')
+xadmin.site.register(ProductUrl,ProductUrlAdmin)
 
-# 商品详情况管理
+class ProductTagAdmin(object):
+    list_display = ('productbaseinfo','tag')
+xadmin.site.register(ProductTag,ProductTagAdmin)
+
+class MyTrollyAdmin(object):
+    list_display = ('user','productbaseinfo','nums','checkbox')
+xadmin.site.register(MyTrolly,MyTrollyAdmin)
+
+class AdvPicAdmin(object):
+    list_display = ('order','productbaseinfo','image_img')
+xadmin.site.register(AdvPicModel,AdvPicAdmin)
+
+'''##########################################'''
+'''############### 商品信息管理 ###############'''
+'''##########################################'''
+
 class ProductBaseInfoAdmin(object):
-    list_display = ('productId', 'productName',"image_img",'productType','color','norms','price','quantity','shell')
-    
+    list_display = ('productId', 'productName', "image_img",
+                    'productType', 'color', 'norms', 'price', 'quantity', 'shell')
+
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']
     import_excel = True
@@ -82,7 +101,7 @@ class ProductBaseInfoAdmin(object):
                             CHOICE_dict = {'上架': 'on', '下架': 'off'}
                             ProductBaseInfo.objects.create(
                                 productName=vals[0],
-                                productType=vals[1],
+                                productType=1,
                                 systemCode=vals[2],
                                 barCode=vals[3],
                                 color=vals[4],
@@ -101,23 +120,7 @@ class ProductBaseInfoAdmin(object):
                     return e
         return super(ProductBaseInfoAdmin, self).post(request, args, kwargs)
 
-xadmin.site.register(ProductBaseInfo,ProductBaseInfoAdmin)
-
-class ProductUrlAdmin(object):
-    list_display = ('productbaseinfo','image_img','url')
-xadmin.site.register(ProductUrl,ProductUrlAdmin)
-
-class ProductTagAdmin(object):
-    list_display = ('productbaseinfo','tag')
-xadmin.site.register(ProductTag,ProductTagAdmin)
-
-class MyTrollyAdmin(object):
-    list_display = ('user','productbaseinfo','nums','checkbox')
-xadmin.site.register(MyTrolly,MyTrollyAdmin)
-
-class AdvPicAdmin(object):
-    list_display = ('order','productbaseinfo','image_img')
-xadmin.site.register(AdvPicModel,AdvPicAdmin)
+xadmin.site.register(ProductBaseInfo, ProductBaseInfoAdmin)
 
 
 '''##########################################'''
@@ -129,12 +132,14 @@ class SignUpAdmin(object):
                     'signup_phone', 'signup_create_time', 'signup_operate_time')
     readonly_fields = ('user', 'activity', 'store', 'signup_name',
                        'signup_phone', 'signup_create_time', 'signup_operate_time')
+    search_fields = ('activity__activity_name', 'store__store_name')
+    list_filter = ('activity', 'store')
     List_display_links = None  #禁用编辑链接
 
     def has_add_permission(self):
         return False
 
-    def has_delete_permission(self):
+    def has_delete_permission(self,request=None):
         return False
     
 xadmin.site.register(SignUp,SignUpAdmin)
@@ -145,7 +150,10 @@ xadmin.site.register(SignUp,SignUpAdmin)
 
 class StoreAdmin(object):
     list_display = ('store_name', 'store_telephone',
-                    'store_address', 'store_area', 'store_longitude', 'store_latitude')
+                    'store_address', 'store_area')
+    search_fields = ('store_name', 'store_telephone',
+                     'store_address')
+    list_filter = ('store_area',)
 xadmin.site.register(Store, StoreAdmin)
 
 '''##########################################'''
@@ -154,6 +162,7 @@ xadmin.site.register(Store, StoreAdmin)
 
 class ATypeAdmin(object):
     list_display = ('activity_type', 'type_description')
+    search_fields = ('activity_type',)
 xadmin.site.register(ActivityType, ATypeAdmin)
 
 '''##########################################'''
@@ -170,69 +179,14 @@ class ATextStackInline(object):
 
 class ActivityAdmin(object):
     list_display = ('activity_name',
-                    'activity_type', 'activity_descripation', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
-    filter_horizontal = ('activity_store',)
+                    'activity_type', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
+    search_fields = ('activity_name',)
+    list_filter = ('activity_type', 'activity_store')
+    ordering = ('activity_start_datetime', 'activity_end_datetime')
+
+    filter_horizontal = ('activity_store', 'activity_type')
     style_fields = {'activity_store': 'm2m_transfer'}
     inlines = [AImageStackInline, ATextStackInline]  # 关联子表
+
     save_as = True
 xadmin.site.register(Activity, ActivityAdmin)
-
-'''############################################################'''
-
-
-# 外键导入测试
-class TypeAdmin(object):
-    list_display = ('name','desc')
-xadmin.site.register(Type,TypeAdmin)
-    
-class Test2StackInline(object):
-    model = Test2
-    extra = 1
-
-
-# excel导入测试
-class TestAdmin(object):
-    list_display = ('name', 'age', 'sex','type')
-
-    def type(self, obj):
-        '''关联类型名称获取'''
-        return obj.type.name
-    type.short_description = '类别' # 后台显示名称
-    
-    inlines = [Test2StackInline] #关联子表
-
-    #excel导入导出功能
-    list_export = ['xls', 'xml', 'json']
-    import_excel = True
-
-    def post(self, request, *args, **kwargs):
-        #  导入逻辑
-        if 'excel' in request.FILES:
-            pass
-            excel_file = request.FILES.get('excel')
-            file_type = excel_file.name.split('.')[1]
-            if file_type in ['xlsx', 'xls']:   # 支持这两种文件格式
-                # 打开工作文件
-                data = xlrd.open_workbook(
-                    filename=None, file_contents=excel_file.read())
-                table = data.sheets()[0]
-                rows = table.nrows
-                try:
-                    with transaction.atomic():
-                        for row in range(1, rows):
-                            vals = table.row_values(row)
-                            CHOICE_dict = {'未知':0,'男':1,'女':2}
-                            Test.objects.create(
-                                name=vals[0],
-                                age=vals[1],
-                                sex=CHOICE_dict.get(vals[2])
-                            )
-                except Exception as e:
-                    return e
-        return super(TestAdmin, self).post(request, args, kwargs)
-xadmin.site.register(Test, TestAdmin)
-
-
-
-
-

@@ -27,7 +27,7 @@ class Store(models.Model):
     def __str__(self):
         return self.store_name.__str__()
 
-    __unicode__ = '__str__'
+    __unicode__ = __str__
 
     class Meta:
         app_label = 'wechatapp'

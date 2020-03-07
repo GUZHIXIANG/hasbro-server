@@ -22,7 +22,7 @@ class Activity(models.Model):
     # activity_store = models.ManyToManyField(
     #     Store, through='ActivityStore',verbose_name='活动门店')
     activity_store = models.ManyToManyField(
-        Store, verbose_name='活动门店')
+        Store, verbose_name='活动门店',null=True)
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
         verbose_name='活动开始时间', default=timezone.now)
@@ -37,7 +37,7 @@ class Activity(models.Model):
     def __str__(self):
         return self.activity_name.__str__()
 
-    __unicode__ = '__str__'
+    __unicode__ = __str__
 
     class Meta:
         app_label = 'wechatapp'
