@@ -8,7 +8,7 @@ from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
 
-from .models.ActivityModel import Activity,ActivityStore,ActivityType,ActivityImage
+from .models.ActivityModel import *
 from .models.SignUpModel import SignUp
 from .models.StoreModel import Store
 from .models.TestModel import *
@@ -78,15 +78,43 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 
 # 临时后台用
-xadmin.site.register(Activity)
-xadmin.site.register(ActivityStore)
 xadmin.site.register(ActivityType)
-xadmin.site.register(ActivityImage)
 xadmin.site.register(SignUp)
 xadmin.site.register(Store)
 
+'''############################################################'''
 
-'''##########################################################################'''
+class AImageStackInline(object):
+    model = ActivityImage
+    extra = 1
+
+class ATextStackInline(object):
+    model = ActivityText
+    extra = 1
+
+
+class ActivityAdmin(object):
+    list_display = ('activity_name',
+                    'activity_type', 'activity_descripation', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
+    filter_horizontal = ('activity_store',)
+    style_fields = {'activity_store': 'm2m_transfer'}
+
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if db_field.name == 'activity_store':
+            qs = kwargs.get('queryset', db_field.remote_field.model.objects)
+            # Avoid a major performance hit resolving permission names which
+            # triggers a content_type load:
+            kwargs['queryset'] = qs.select_related('content_type')
+        return super().formfield_for_manytomany(db_field, request=request, **kwargs)
+    
+    inlines = [AImageStackInline, ATextStackInline]  # 关联子表
+
+    # def fromfield_for_dbfield(self,db_field,**kwargs):
+    #     if db_field.name = 
+
+xadmin.site.register(Activity, ActivityAdmin)
+
+'''############################################################'''
 # 外键导入测试
 class TypeAdmin(object):
     list_display = ('name','desc')
@@ -96,16 +124,44 @@ class Test2StackInline(object):
     model = Test2
     extra = 1
 
+class Test3Admin(object):
+    list_display = ('name','user')
+    filter_horizontal = ('user',)
+    style_fields = {'user': 'm2m_transfer'}
+xadmin.site.register(Test3, Test3Admin)
+
+class Test41Inline(object):
+    model = Test41
+    filter_horizontal = ('user',)
+    style_fields = {'user': 'm2m_transfer'}
+    extra = 1
+
+class Test4Admin(object):
+    list_display = ('name', 'user')
+    inlines = [Test41Inline]
+    # filter_horizontal = ('user',)
+    # style_fields = {'user': 'm2m_transfer'}
+
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if db_field.name == 'user':
+            qs = kwargs.get('queryset', db_field.remote_field.model.objects)
+            # Avoid a major performance hit resolving permission names which
+            # triggers a content_type load:
+            kwargs['queryset'] = qs.select_related('content_type')
+        return super().formfield_for_manytomany(db_field, request=request, **kwargs)
+
+xadmin.site.register(Test4, Test4Admin)
 
 # excel导入测试
 class TestAdmin(object):
     list_display = ('name', 'age', 'sex','type')
 
     def type(self, obj):
+        '''关联类型名称获取'''
         return obj.type.name
-    type.short_description = '类别'
+    type.short_description = '类别' # 后台显示名称
     
-    inlines = [Test2StackInline]
+    inlines = [Test2StackInline] #关联子表
 
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']

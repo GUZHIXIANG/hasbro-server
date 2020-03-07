@@ -26,6 +26,42 @@ class Test2(models.Model):
     def __str__(self):
         return self.phone.__str__()
 
+class Test3(models.Model):
+    name = models.CharField(verbose_name='分组', max_length=13)
+    user = models.ManyToManyField(Test)
+
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = 'Test3'
+        verbose_name_plural = '测试用例4'
+
+    def __str__(self):
+        return self.name.__str__()
+
+
+class Test4(models.Model):
+    name = models.CharField(verbose_name='权限', max_length=13)
+    user = models.ManyToManyField(Test,through='Test41')
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = 'Test4'
+        verbose_name_plural = '测试用例5'
+
+    def __str__(self):
+        return self.name.__str__()
+
+class Test41(models.Model):
+    name = models.ForeignKey(Test4, on_delete=models.CASCADE)
+    user = models.ForeignKey(Test, on_delete=models.CASCADE)
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = 'Test41'
+        verbose_name_plural = '测试用例5-1'
+
+
 
 class Type(models.Model):
     name = models.CharField(verbose_name='类别名', max_length=10)
