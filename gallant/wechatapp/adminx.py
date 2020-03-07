@@ -77,12 +77,16 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
-    list_display = ('productId', 'productName', "image_img",
-                    'productType', 'color', 'norms', 'price', 'quantity', 'shell')
+    list_display = ('productId', 'productName',  'systemCode', 'barCode', "image_img",
+                    'productType', 'color', 'norms', 'weight', 'price', 'quantity', 'shell')
+    search_fields = ('productId', 'productName', 'systemCode', 'barCode')
+    list_filter = ('productType', 'shell')
+    list_editable = ('shell',)
 
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']
     import_excel = True
+
 
     def post(self, request, *args, **kwargs):
         #  导入逻辑
@@ -90,7 +94,7 @@ class ProductBaseInfoAdmin(object):
             pass
             excel_file = request.FILES.get('excel')
             file_type = excel_file.name.split('.')[1]
-            if file_type in ['xlsx', 'xls']:   # 支持这两种文件格式
+            if file_type in ['xlsx', 'xls']:  # 支持这两种文件格式
                 # 打开工作文件
                 data = xlrd.open_workbook(
                     filename=None, file_contents=excel_file.read())
@@ -100,27 +104,29 @@ class ProductBaseInfoAdmin(object):
                     with transaction.atomic():
                         for row in range(1, rows):
                             vals = table.row_values(row)
+                            print(vals)
                             CHOICE_dict = {'上架': 'on', '下架': 'off'}
                             ProductBaseInfo.objects.create(
-                                productName=vals[0],
-                                productType=1,
+                                productId=vals[0],
+                                productName=vals[1],
                                 systemCode=vals[2],
                                 barCode=vals[3],
-                                color=vals[4],
-                                norms=vals[5],
-                                weight=vals[6],
-                                price=vals[7],
-                                description=vals[8],
-                                brief=vals[9],
-                                brand=vals[10],
                                 smallurl='',
-                                shell=CHOICE_dict.get(vals[12]),
-                                quantity=vals[13]
-
+                                productType=ProductType.objects.get(
+                                    typeChildsName=vals[5]),
+                                color=vals[6],
+                                norms=vals[7],
+                                weight=vals[8],
+                                price=vals[9],
+                                quantity=vals[10],
+                                shell=CHOICE_dict.get(vals[11]),
+                            
                             )
                 except Exception as e:
+                    print(e)
                     return e
-        return super(ProductBaseInfoAdmin, self).post(request, args, kwargs)
+        return super().post(request, args, kwargs)
+        
 
 '''##########################################'''
 '''############### 报名信息查看 ###############'''
@@ -135,6 +141,9 @@ class SignUpAdmin(object):
                        'signup_phone', 'signup_create_time', 'signup_operate_time')
     search_fields = ('activity__activity_name', 'store__store_name')
     list_filter = ('activity', 'store')
+
+    refresh_times = [300, 600]
+
     List_display_links = None  #禁用编辑链接
 
     def has_add_permission(self):

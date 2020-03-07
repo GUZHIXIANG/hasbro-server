@@ -11,7 +11,7 @@ class ProductMainCategory(models.Model):
     typeName = models.CharField('商品总类',max_length=50,blank=False)
 
     def __str__(self):
-        return "["+self.typeName.__str__()+"]"
+        return self.typeName.__str__()
 
     class Meta:
         app_label = 'wechatapp'
@@ -32,7 +32,7 @@ class ProductSecondCategory(models.Model):
     banner_name = models.CharField('大类广告名称',max_length=50,blank=False,default='')
 
     def __str__(self):
-        return "["+self.typeChildName.__str__()+"]"
+        return self.typeChildName.__str__()
 
     class Meta:
         app_label = 'wechatapp'
@@ -68,7 +68,7 @@ class ProductType(models.Model):
     url = StdImageField(verbose_name="子类缩略图",upload_to='typeb',variations={'nail': {'width': 25, 'height': 25}},default='')
 
     def __str__(self):
-        return "["+self.typeChildsName.__str__()+"]"
+        return self.typeChildsName.__str__()
 
     class Meta:
         app_label = 'wechatapp'

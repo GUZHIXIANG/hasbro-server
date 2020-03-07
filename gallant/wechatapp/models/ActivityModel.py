@@ -22,7 +22,7 @@ class Activity(models.Model):
     # activity_store = models.ManyToManyField(
     #     Store, through='ActivityStore',verbose_name='活动门店')
     activity_store = models.ManyToManyField(
-        Store, verbose_name='活动门店',null=True)
+        Store, verbose_name='活动门店',null=True,blank=True)
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
         verbose_name='活动开始时间', default=timezone.now)
