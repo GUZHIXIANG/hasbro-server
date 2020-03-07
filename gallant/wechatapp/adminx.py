@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models.UserModel import UserProfile
 from .models.ProductTypeModel import ProductMainCategory,ProductSecondCategory,ProductType
-from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag
+from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag,PTag
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
 
@@ -70,6 +70,20 @@ class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
+
+'''##########################################'''
+'''############### 商品标签管理 ###############'''
+'''##########################################'''
+
+
+@xadmin.sites.register(PTag)
+class PtagAdmin(object):
+    list_display = ('name', 'description', 'product')
+    search_fields = ('product__productId', 'product__productName',
+                     'product__systemCode', 'product__barCode')
+    filter_horizontal = ('product')
+    style_fields = {'product': 'm2m_transfer'}
+
 '''##########################################'''
 '''############### 商品信息管理 ###############'''
 '''##########################################'''
@@ -78,11 +92,14 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
     list_display = ('productId', 'productName',  'systemCode', 'barCode', "image_img",
-                    'productType', 'color', 'norms', 'weight', 'price', 'quantity', 'shell')
+                    'productType', 'color', 'norms', 'weight', 'price', 'quantity', 'shell','tag')
     search_fields = ('productId', 'productName', 'systemCode', 'barCode')
     list_filter = ('productType', 'shell')
     list_editable = ('shell',)
 
+    def tag(self,obj):
+        return '.'.join([x.name for x in obj.tags.all()])
+    tag.short_description = '标签'
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']
     import_excel = True
@@ -197,7 +214,7 @@ class ActivityAdmin(object):
     list_filter = ('activity_type', 'activity_store')
     ordering = ('activity_start_datetime', 'activity_end_datetime')
 
-    filter_horizontal = ('activity_store', 'activity_type')
+    filter_horizontal = ('activity_store')
     style_fields = {'activity_store': 'm2m_transfer'}
     inlines = [AImageStackInline, ATextStackInline]  # 关联子表
 

@@ -4,7 +4,6 @@ from stdimage.models import StdImageField
 from wechatapp.models.StoreModel import Store
 
 
-
 # 活动信息表
 class Activity(models.Model):
     # 父活动 ----- 自关联
@@ -51,7 +50,7 @@ class ActivityType(models.Model):
     activity_type = models.CharField(verbose_name='活动类型',max_length=16,unique=True)
     # 类型描述
     type_description = models.CharField(
-        verbose_name='类型描述', max_length=100,null=True)
+        verbose_name='类型描述', max_length=100,null=True,blank=True)
 
     def __str__(self):
         return self.activity_type.__str__()

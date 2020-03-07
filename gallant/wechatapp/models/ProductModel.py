@@ -40,7 +40,7 @@ class ProductBaseInfo(models.Model):
     brand = models.TextField(verbose_name='品牌', blank=True, default="这里是商品牌")
 
     # 缩略图
-    smallurl = StdImageField(verbose_name="商品展示缩略图",upload_to='ProductPreViewPic',variations={'nail': {'width': 100, 'height': 75}},blank=True)
+    smallurl = StdImageField(verbose_name="商品展示缩略图",upload_to='ProductPreViewPic',variations={'nail': {'width': 100, 'height': 75}},blank=True,default='')
     
     quantity = models.IntegerField(
         verbose_name="虚拟库存", blank=True, default=500)
@@ -115,3 +115,21 @@ class ProductTag(models.Model):
         app_label = 'wechatapp'
         verbose_name = '商品标签管理'
         verbose_name_plural = '商品标签管理'
+
+
+'''#######################################'''
+
+
+class PTag(models.Model):
+    name = models.CharField(verbose_name='标签名称',max_length=10)
+    description = models.CharField(verbose_name='标签描述', max_length=100)
+    product = models.ManyToManyField(
+        ProductBaseInfo, related_name='tags', verbose_name='标注商品', null=True, blank=True)
+
+    def __str__(self):
+        return self.name.__str__()
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = '商品标签管理*'
+        verbose_name_plural = '商品标签管理*'
