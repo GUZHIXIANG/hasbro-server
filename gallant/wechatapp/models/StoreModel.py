@@ -1,17 +1,19 @@
 from django.db import models
 
+
+
 # 门店信息表
 class Store(models.Model):
     # 门店名
     store_name = models.CharField(verbose_name='门店名',max_length=255,unique=True)
+    # 门店电话
+    store_telephone = models.CharField(
+        verbose_name='门店电话', max_length=100, blank=True)
     # 门店地址
     store_address = models.TextField(verbose_name='门店地址', blank=True)
     # 门店商区
     store_area = models.CharField(
         verbose_name='门店商区', max_length=100, blank=True)
-    # 门店电话
-    store_telephone = models.CharField(
-        verbose_name='门店电话', max_length=100, blank=True)
     # 门店经纬度
     store_longitude = models.DecimalField(
         verbose_name='门店经度', max_digits=22, decimal_places=16, blank=True, null=True)
@@ -25,7 +27,9 @@ class Store(models.Model):
     def __str__(self):
         return self.store_name.__str__()
 
+    __unicode__ = '__str__'
+
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'Store'
-        verbose_name_plural = '门店信息表'
+        verbose_name_plural = '门店信息管理'

@@ -12,12 +12,6 @@ class SignUp(models.Model):
     store = models.ForeignKey('Store', on_delete=models.CASCADE, blank=True)
     # 活动用户 ----- 关联用户信息表
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
-    # # 活动ID
-    # activity_id = models.IntegerField(verbose_name='活动ID')
-    # # 门店ID
-    # store_id = models.IntegerField(verbose_name='门店ID')
-    # # 用户ID
-    # user_id = models.CharField(verbose_name='用户ID',max_length=256)
     # 报名人姓名
     signup_name = models.CharField(
         verbose_name='报名人姓名', max_length=128, blank=True)
@@ -36,5 +30,5 @@ class SignUp(models.Model):
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'SignUp'
-        verbose_name_plural = '报名信息表'
+        verbose_name_plural = '报名信息查看'
 

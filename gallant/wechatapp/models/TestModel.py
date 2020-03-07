@@ -74,3 +74,25 @@ class Type(models.Model):
 
     def __str__(self):
         return self.name.__str__()
+
+
+
+'''##################################'''
+# # 教师表
+# class Teacher(models.Model):
+# 	name = models.CharField(max_length=32)
+
+# # 学生表
+
+
+# class Student(models.Model):
+# 	name = models.CharField(max_length=32)
+# 	teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+
+# # 课程表
+
+
+# class Course(models.Model):
+#     name = models.CharField(max_length=32)
+#     student = models.ManyToManyField(Student)
+

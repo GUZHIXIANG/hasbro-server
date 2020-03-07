@@ -3,6 +3,8 @@ from django.utils import timezone
 from stdimage.models import StdImageField
 from wechatapp.models.StoreModel import Store
 
+
+
 # 活动信息表
 class Activity(models.Model):
     # 父活动 ----- 自关联
@@ -17,8 +19,10 @@ class Activity(models.Model):
     # 活动描述
     activity_descripation = models.TextField(verbose_name='活动描述', blank=True)
     # 关联门店 ----- 关联门店信息表
+    # activity_store = models.ManyToManyField(
+    #     Store, through='ActivityStore',verbose_name='活动门店')
     activity_store = models.ManyToManyField(
-        Store, through='ActivityStore',verbose_name='活动门店')
+        Store, verbose_name='活动门店')
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
         verbose_name='活动开始时间', default=timezone.now)
@@ -33,22 +37,12 @@ class Activity(models.Model):
     def __str__(self):
         return self.activity_name.__str__()
 
+    __unicode__ = '__str__'
+
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'Activity'
-        verbose_name_plural = '活动信息表'
-
-class ActivityStore(models.Model):
-    # 活动 ----- 关联活动信息表
-    activity = models.ForeignKey(
-        Activity, on_delete=models.CASCADE)
-    # 门店 ----- 关联门店信息表
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
-
-    class Meta:
-        app_label = 'wechatapp'
-        verbose_name = 'ActivityStore'
-        verbose_name_plural = '活动门店关联表'
+        verbose_name_plural = '活动信息管理'
 
 
 # 活动类型表
@@ -62,10 +56,12 @@ class ActivityType(models.Model):
     def __str__(self):
         return self.activity_type.__str__()
 
+    __unicode__ = '__str__'
+
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'ActivityType'
-        verbose_name_plural = '活动类型表'
+        verbose_name_plural = '活动类型管理'
 
 # 活动图片表
 class ActivityImage(models.Model):
@@ -84,10 +80,21 @@ class ActivityImage(models.Model):
     def __str__(self):
         return self.image.__str__()
 
+    __unicode__ = '__str__'
+
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'ActivityImage'
-        verbose_name_plural = '活动图片表'
+        verbose_name_plural = '活动图片'
+
+    def image_img(self):
+        if self.image:
+            return str('<img src="%s" />' % self.image.nail.url)
+        else:
+            return u'上传图片'
+
+    image_img.short_description = '活动海报'
+    image_img.allow_tags = True
 
 
 # 活动文本表
@@ -103,7 +110,9 @@ class ActivityText(models.Model):
     def __str__(self):
         return self.title.__str__()
 
+    __unicode__ = '__str__'
+
     class Meta:
         app_label = 'wechatapp'
         verbose_name = 'ActivityText'
-        verbose_name_plural = '活动文本表'
+        verbose_name_plural = '活动文本'
