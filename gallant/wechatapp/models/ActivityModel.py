@@ -24,10 +24,10 @@ class Activity(models.Model):
         Store, verbose_name='活动门店',null=True,blank=True)
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
-        verbose_name='活动开始时间', default=timezone.now)
+        verbose_name='开始时间', default=timezone.now)
     # 活动结束时间
     activity_end_datetime = models.DateTimeField(
-        verbose_name='活动结束时间', default=timezone.now)
+        verbose_name='结束时间', default=timezone.now)
     # 创建时间
     activity_create_time = models.DateTimeField(verbose_name='创建时间',auto_now_add=True)
     # 操作时间
@@ -40,7 +40,7 @@ class Activity(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'Activity'
+        verbose_name = '活动信息'
         verbose_name_plural = '活动信息管理'
 
 
@@ -59,7 +59,7 @@ class ActivityType(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityType'
+        verbose_name = '活动类型'
         verbose_name_plural = '活动类型管理'
 
 # 活动图片表
@@ -83,7 +83,7 @@ class ActivityImage(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityImage'
+        verbose_name = '活动图片'
         verbose_name_plural = '活动图片'
 
     def image_img(self):
@@ -113,5 +113,5 @@ class ActivityText(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityText'
+        verbose_name = '活动文本'
         verbose_name_plural = '活动文本'

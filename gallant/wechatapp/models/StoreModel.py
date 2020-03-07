@@ -31,5 +31,5 @@ class Store(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'Store'
+        verbose_name = '门店信息'
         verbose_name_plural = '门店信息管理'

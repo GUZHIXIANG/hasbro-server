@@ -31,6 +31,6 @@ class SignUp(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'SignUp'
+        verbose_name = '报名信息'
         verbose_name_plural = '报名信息查看'
 
