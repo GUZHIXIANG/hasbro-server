@@ -83,3 +83,76 @@ class ProductType(models.Model):
 
     image_img.short_description = '类别缩略图'
     image_img.allow_tags = True
+
+
+'''#######################################'''
+
+
+class PType(models.Model):
+    '''商品类型'''
+    parent = models.ForeignKey(
+        'self', on_delete=models.CASCADE, blank=True, null=True, verbose_name='父类型')
+    name = models.CharField(
+        verbose_name='类型名称', max_length=20, unique=True)
+    CHOICES = ((1, '一级分类'),(2, '二级分类'),(3, '三级分类'))
+    desc = models.IntegerField(
+        verbose_name='属性', choices=CHOICES, blank=True)
+    # 创建时间
+    create_time = models.DateTimeField(
+        verbose_name='创建时间', auto_now_add=True)
+    # 操作时间
+    operate_time = models.DateTimeField(
+        verbose_name='操作时间', auto_now=True)
+
+    def __str__(self):
+        return self.name.__str__()
+    
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = '商品类型*'
+        verbose_name_plural = '商品类型管理*'
+    
+
+class PTypeImage(models.Model):
+    '''商品类型图片'''
+    ptype = models.ForeignKey(
+        PType, on_delete=models.CASCADE,related_name='type_image', verbose_name='商品类型',default=1)
+    image = StdImageField(verbose_name="图片路径", upload_to='PTypeImage', variations={
+                          'thumbnail': (10, 10), 'medium': (20, 20), 'large': (100, 75)}, default='')
+
+    def __str__(self):
+        return self.image.__str__()
+
+    __unicode__ = '__str__'
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = '商品类型图片*'
+        verbose_name_plural = '商品类型图片管理*'
+
+    def image_thumbnail(self):
+        if self.image:
+            return str('<img src="%s" />' % self.image.thumbnail.url)
+        else:
+            return u'上传图片'
+
+    image_thumbnail.short_description = '缩略图'
+    image_thumbnail.allow_tags = True
+
+    def image_medium(self):
+        if self.image:
+            return str('<img src="%s" />' % self.image.medium.url)
+        else:
+            return u'上传图片'
+
+    image_medium.short_description = '中号图'
+    image_medium.allow_tags = True
+
+    def image_large(self):
+        if self.image:
+            return str('<img src="%s" />' % self.image.large.url)
+        else:
+            return u'上传图片'
+
+    image_large.short_description = '大号图'
+    image_large.allow_tags = True

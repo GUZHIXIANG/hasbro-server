@@ -121,6 +121,7 @@ class ProductTag(models.Model):
 
 
 class PTag(models.Model):
+    '''商品标签'''
     name = models.CharField(verbose_name='标签名称',max_length=10)
     description = models.CharField(verbose_name='标签描述', max_length=100)
     product = models.ManyToManyField(
@@ -131,5 +132,5 @@ class PTag(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = '商品标签管理*'
+        verbose_name = '商品标签*'
         verbose_name_plural = '商品标签管理*'

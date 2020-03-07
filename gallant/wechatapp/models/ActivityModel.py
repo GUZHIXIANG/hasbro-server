@@ -84,7 +84,7 @@ class ActivityImage(models.Model):
     class Meta:
         app_label = 'wechatapp'
         verbose_name = '活动图片'
-        verbose_name_plural = '活动图片'
+        verbose_name_plural = '活动图片管理'
 
     def image_img(self):
         if self.image:
@@ -114,4 +114,4 @@ class ActivityText(models.Model):
     class Meta:
         app_label = 'wechatapp'
         verbose_name = '活动文本'
-        verbose_name_plural = '活动文本'
+        verbose_name_plural = '活动文本管理'

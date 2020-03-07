@@ -3,7 +3,7 @@ from xadmin import views
 from django.contrib import admin
 
 from .models.UserModel import UserProfile
-from .models.ProductTypeModel import ProductMainCategory,ProductSecondCategory,ProductType
+from .models.ProductTypeModel import ProductMainCategory, ProductSecondCategory, ProductType,PType,PTypeImage
 from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag,PTag
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
@@ -70,6 +70,50 @@ class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
+'''##########################################'''
+'''############### 商品类型图片管理 ###############'''
+'''##########################################'''
+
+@xadmin.sites.register(PTypeImage)
+class PTypeImageAdmin(object):
+    '''商品类型图片管理'''
+    list_display = ('ptype', 'image_thumbnail',
+                    'image_medium', 'image_large')
+    search_fields = ('ptype__name',)
+
+
+'''##########################################'''
+'''############### 商品类型管理 ###############'''
+'''##########################################'''
+
+class PTypeImageStackInline(object):
+    model = PTypeImage
+    extra = 1
+
+@xadmin.sites.register(PType)
+class PTypeAdmin(object):
+    '''商品类型管理'''
+    list_display = ('name', 'parent', 'full_name', 'desc')
+    search_fields = ('name', 'parent')
+    list_editable = ('parent', 'desc')
+    list_filter = ('parent', 'desc')
+
+    def full_name(self,obj):
+        fname = [obj.name.__str__()]
+        tmp = obj.parent
+        c = 0
+        while tmp != None:
+            if c > 10: # 限制循环
+                continue
+            fname.append(tmp.name.__str__())
+            tmp = tmp.parent
+            print('++++++++',tmp)
+            c += 1 
+        return '|'.join(fname[::-1])
+    full_name.short_description = '全称'
+
+    inlines = [PTypeImageStackInline]
+
 
 '''##########################################'''
 '''############### 商品标签管理 ###############'''
@@ -78,10 +122,11 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 @xadmin.sites.register(PTag)
 class PtagAdmin(object):
+    '''商品标签管理'''
     list_display = ('name', 'description', 'product')
     search_fields = ('product__productId', 'product__productName',
                      'product__systemCode', 'product__barCode')
-    filter_horizontal = ('product')
+    filter_horizontal = ('product',)
     style_fields = {'product': 'm2m_transfer'}
 
 '''##########################################'''
@@ -91,6 +136,7 @@ class PtagAdmin(object):
 
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
+    '''商品信息管理'''
     list_display = ('productId', 'productName',  'systemCode', 'barCode', "image_img",
                     'productType', 'color', 'norms', 'weight', 'price', 'quantity', 'shell','tag')
     search_fields = ('productId', 'productName', 'systemCode', 'barCode')
@@ -152,6 +198,7 @@ class ProductBaseInfoAdmin(object):
 
 @xadmin.sites.register(SignUp)
 class SignUpAdmin(object):
+    '''报名信息查看'''
     list_display = ('user', 'activity', 'store', 'signup_name',
                     'signup_phone', 'signup_create_time', 'signup_operate_time')
     readonly_fields = ('user', 'activity', 'store', 'signup_name',
@@ -176,6 +223,7 @@ class SignUpAdmin(object):
 
 @xadmin.sites.register(Store)
 class StoreAdmin(object):
+    '''门店信息管理'''
     list_display = ('store_name', 'store_telephone',
                     'store_address', 'store_area')
     search_fields = ('store_name', 'store_telephone',
@@ -189,6 +237,7 @@ class StoreAdmin(object):
 
 @xadmin.sites.register(ActivityType)
 class ATypeAdmin(object):
+    '''活动类型管理'''
     list_display = ('activity_type', 'type_description')
     search_fields = ('activity_type',)
 
@@ -208,13 +257,14 @@ class ATextStackInline(object):
 
 @xadmin.sites.register(Activity)
 class ActivityAdmin(object):
+    '''活动信息管理'''
     list_display = ('activity_name',
                     'activity_type', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
     search_fields = ('activity_name',)
     list_filter = ('activity_type', 'activity_store')
     ordering = ('activity_start_datetime', 'activity_end_datetime')
 
-    filter_horizontal = ('activity_store')
+    filter_horizontal = ('activity_store',)
     style_fields = {'activity_store': 'm2m_transfer'}
     inlines = [AImageStackInline, ATextStackInline]  # 关联子表
 
