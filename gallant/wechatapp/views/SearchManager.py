@@ -1,8 +1,8 @@
 from wechatapp.views import *
 # 模型
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductType,ProductTag)
+from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag)
 # 序列器
-from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTypeSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
+from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
 
 # 商品搜索栏支持返回搜索商品用的
 

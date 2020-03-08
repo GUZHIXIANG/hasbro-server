@@ -49,7 +49,7 @@ class user_register(APIView):
             return Response().errorMessage(message="USER CODE NULL", status=status.HTTP_400_BAD_REQUEST)
         
         url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code" \
-            .format("wxe1edd4b95b1a1517", '4c72644f32fadbcca08ebdf38f0f1dc9', wechat_user_code)
+            .format("wx2d34d6cbf1442dfb", '98fb02af464be7a252f0768ff2359400', wechat_user_code)
         
         user_wx_keys = json.loads(requests.get(url).text)
         openid = user_wx_keys['openid'] if 'openid' in user_wx_keys else None

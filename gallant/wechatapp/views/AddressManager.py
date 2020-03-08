@@ -48,6 +48,10 @@ class address(APIView):
             data['province'] = data.pop('province_id')
             data['city'] = data.pop('city_id')
             data['district'] = data.pop('district_id')
+            if data.get('is_default')==True:
+                old_address = Address.objects.filter(user=user.id)
+                if old_address.exists():
+                    old_address.update(is_default=False)
             if address_id == 0:
                 address_serializer = AddressSerializer(
                     data=data, partial=True)
@@ -83,9 +87,7 @@ class address(APIView):
         security=[]
     )
     def delete(self, request, format=None):
-        print('------------------------')
         if request.method == "DELETE":  # 验证请求方式
-            print('#################')
             # 获取用户key
             user_key = request.META.get("HTTP_SESSION_KEY")
             users = User.objects.filter(password=user_key)
@@ -136,14 +138,15 @@ class address(APIView):
                     d['city_id'] = d.pop('city')
                     d['district_id'] = d.pop('district')
                     d['full_region'] = ''.join(
-                        [d.pop('province_name'), d.pop('city_name'), d.pop('district_name')])
+                        [d.get('province_name'), d.get('city_name'), d.get('district_name')])
                     data_new.append(d)
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
                                                  message=message, data=data_new)
-            else:  # 资源不存在异常
-                message = "未找到指定资源"
-                return Response().errorMessage(status=status.HTTP_404_NOT_FOUND, message=message)
+            else:  # 资源不存在
+                message = "无数据"
+                return Response().successMessage(status=status.HTTP_200_OK,
+                                                 message=message, data=[])
         else: # 请求方式异常
             message = "请求方式错误"
             return Response().successMessage(status=status.HTTP_405_METHOD_NOT_ALLOWED, message=message)
@@ -179,7 +182,7 @@ class address_detail(APIView):
                 data['city_id'] = data.pop('city')
                 data['district_id'] = data.pop('district')
                 data['full_region'] = ''.join(
-                    [data.pop('province_name'), data.pop('city_name'), data.pop('district_name')])
+                    [data.get('province_name'), data.get('city_name'), data.get('district_name')])
                 message = "查询成功"
                 return Response().successMessage(status=status.HTTP_200_OK,
                                                 message=message, data=data)

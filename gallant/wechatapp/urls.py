@@ -4,9 +4,11 @@ from wechatapp.views.SignUpManager import *
 from wechatapp.views.ActivityManager import *
 from wechatapp.views.StoreManager import *
 from wechatapp.views.AddressManager import *
-from wechatapp.views.ProductsInfoManager import items,itemtype,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
+from wechatapp.views.ProductsInfoManager import items,itemurl,itemtag,homepage,hotgoods,disgoods,newgoods,itemsdetail
 from wechatapp.views.TrollyManager import trolly,trollynum,trollycheckbox
 from wechatapp.views.SearchManager import itemSearch,typeForItem
+from wechatapp.views.TypeManager import itemtype
+from wechatapp.views.CheckOutManager import checkOut
 
 urlpatterns = [
 
@@ -20,37 +22,15 @@ urlpatterns = [
     path('signup/signup_view',
          signup_view.as_view(), name='signup_view'),
 
-    path('store/store_create',
-         store_create.as_view(), name='store_create'),
-    path('store/store_delete',
-         store_delete.as_view(), name='store_delete'),
-    path('store/store_update',
-         store_update.as_view(), name='store_update'),
+     # 门店信息
     path('store/store_view',
          store_view.as_view(), name='store_view'),
 
-    path('activity/activity_create',
-         activity_create.as_view(), name='activity_create'),
-    path('activity/activity_delete',
-         activity_delete.as_view(), name='activity_delete'),
-    path('activity/activity_update',
-         activity_update.as_view(), name='activity_update'),
+     # 活动信息
     path('activity/activity_view',
          activity_view.as_view(), name='activity_view'),
     path('activity/activitydetail_view',
          activitydetail_view.as_view(), name='activitydetail_view'),
-#     path('activity/activitystore_view',
-#          activitystore_view.as_view(), name='activitystore_view'),
-
-     path('activitytype/activitytype_create',
-         activitytype_create.as_view(), name='activitytype_create'),
-     path('activitytype/activitytype_delete',
-             activitytype_delete.as_view(), name='activitytype_delete'),
-     path('activitytype/activitytype_update',
-         activitytype_update.as_view(), name='activitytype_update'),
-     path('activitytype/activitytype_view',
-         activitytype_view.as_view(), name='activitytype_view'),
-
 
        # 商品种类
      path('product/itemtype', itemtype.as_view(), name='itemtype'),
@@ -71,6 +51,10 @@ urlpatterns = [
      path('trolly/item', trolly.as_view(), name='trolly'),
      path('trolly/num', trollynum.as_view(), name='trolly'),
      path('trolly/checkbox', trollycheckbox.as_view(), name='trolly'),
+
+     # 订单相关信息
+     path('checkout/checked', checkOut.as_view(), name='checked'),
+     
 
      # 搜索查询
      path('search/items', itemSearch.as_view(), name='search'),

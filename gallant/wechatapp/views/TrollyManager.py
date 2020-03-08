@@ -113,9 +113,10 @@ class trolly(APIView):
         
         res = MyTrolly.objects.all().filter(user=userpro)
 
-        # 计算数值
+        # 计算所选商品价格
+        checked_goods = MyTrolly.objects.all().filter(user=userpro,checkbox=1)
         checkedGoodsAmount = []
-        for i in res:
+        for i in checked_goods:
             checkedGoodsAmount.append(i.productbaseinfo.price * i.nums)
         checkedGoodsAmount = sum(checkedGoodsAmount)
 
@@ -220,9 +221,10 @@ class trollynum(APIView):
         res = MyTrolly.objects.all().filter(user=userpro)
         serializer = TrollyAllSerializer(res,many=True)
 
-        # 计算数值
+        # 计算所选商品价格
+        checked_goods = MyTrolly.objects.all().filter(user=userpro,checkbox=1)
         checkedGoodsAmount = []
-        for i in res:
+        for i in checked_goods:
             checkedGoodsAmount.append(i.productbaseinfo.price * i.nums)
         checkedGoodsAmount = sum(checkedGoodsAmount)
         
@@ -271,5 +273,12 @@ class trollycheckbox(APIView):
         res = MyTrolly.objects.all().filter(user=userpro)
         serializer = TrollyAllSerializer(res,many=True)
 
-        return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
+        # 计算所选商品价格
+        checked_goods = MyTrolly.objects.all().filter(user=userpro,checkbox=1)
+        checkedGoodsAmount = []
+        for i in checked_goods:
+            checkedGoodsAmount.append(i.productbaseinfo.price * i.nums)
+        checkedGoodsAmount = sum(checkedGoodsAmount)
+
+        return Response().successMessage({"items":serializer.data,"checkedGoodsAmount":checkedGoodsAmount},status=status.HTTP_200_OK)
     

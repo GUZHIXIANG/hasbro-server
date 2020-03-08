@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'wechatapp.middleware.ApiLoggingMiddleware',
+    'request_logging.middleware.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'gallant.urls'
@@ -81,26 +83,26 @@ WSGI_APPLICATION = 'gallant.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hasbro',
-        'USER':'root',
-        'PASSWORD':'1234@Pass',
-        'HOST':'rm-m5ef09c5164i0u57ulo.mysql.rds.aliyuncs.com',
-        'PORT':'3306',
-        'OPTIONS': {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}  
+}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'hasbro',
+#         'USER':'root',
+#         'PASSWORD':'1234@Pass',
+#         'HOST':'rm-m5ef09c5164i0u57ulo.mysql.rds.aliyuncs.com',
+#         'PORT':'3306',
+#         'OPTIONS': {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+#         }
+#     }
+# }  
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -145,3 +147,114 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
+
+# LOGGING settings
+LOG_DIR = BASE_DIR + "/log"
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.request': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',  # change debug level as appropiate
+#             'propagate': False,
+#         },
+#     },
+# }
+REQUEST_LOGGING_ENABLE_COLORIZE = False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,  
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s FuncName:%(funcName)s LINE:%(lineno)d [%(levelname)s]- %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s [%(levelname)s] - %(message)s'
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(message)s'
+        },
+        'normal': {
+            'format': '[{levelname}] {asctime} | {name}:{lineno} | {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'normal'
+        },
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'info.log'),
+            'maxBytes': 1024*1024*50,   # 50 MB
+            'backupCount': 2,
+            'encoding': 'utf-8',
+            'formatter': 'normal',
+        },
+        'default_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'debug.log'),
+            'maxBytes': 1024*1024*50,  # 50 MB
+            'backupCount': 2,
+            'encoding': 'utf-8',
+            'formatter': 'normal',
+        },
+        'request_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'common.log'),
+            'maxBytes': 1024*1024*50,  # 50 MB
+            'backupCount': 2,
+            'encoding':'utf-8',
+            'formatter': 'normal',
+        },
+        'restful_api': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'api.log'),
+            'maxBytes': 1024*1024*50,  # 50 MB
+            'backupCount': 2,
+            'encoding': 'utf-8',
+            'formatter': 'normal',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['default_debug'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'django.request': {
+            'handlers': ['request_handler'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'common': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'api': {
+            'handlers': ['restful_api'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    }
+}
+
