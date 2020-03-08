@@ -330,21 +330,24 @@ class homepage2(APIView):
         security=[]
     )
     def get(self, request, format=None):
-
-        # 首页信息
+        '''首页信息'''
+        # 已优化
         type_list = PType.objects.filter(desc=2)
         tag_hot = PTag.objects.get(name='热门商品').product.all()
         tag_new = PTag.objects.get(name='新品上架').product.all()
         tag_discount = PTag.objects.get(name='降价促销').product.all()
         goodsCount = ProductBaseInfo.objects.all().count()
 
-        advpic = AdvPicModel.objects.all()
-
-        rollAdvPic = AdvPicSerializer(advpic, many=True)
         channel = PTypeSerializer(type_list, many=True)
         hotgoods = ProductAllSerializer(tag_hot, many=True)
         newgoods = ProductAllSerializer(tag_new, many=True)
         discountgoods = ProductAllSerializer(tag_discount, many=True)
+
+        # 未优化
+        advpic = AdvPicModel.objects.all() 
+        
+        rollAdvPic = AdvPicSerializer(advpic, many=True)
+
 
         return Response().successMessage({"hotgoods": hotgoods.data,
                                           "newgoods": newgoods.data,
