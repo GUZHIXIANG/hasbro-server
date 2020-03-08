@@ -212,18 +212,18 @@ class items(APIView):
 #         return Response().successMessage({"hotgoods":serializer.data},status=status.HTTP_200_OK)
 
 
-class hotgoods2(APIView):
-    @swagger_auto_schema(
-        operation_description="获取热门商品信息*",
-        responses={200: "success"
-                   },
-        security=[]
-    )
-    def get(self, request, format=None):
-        tag = PTag.objects.get(name='热门商品')
-        p = tag.product.all()
-        serializer = ProductAllSerializer(p, many=True)
-        return Response().successMessage({"hotgoods": serializer.data}, status=status.HTTP_200_OK)
+# class hotgoods2(APIView):
+#     @swagger_auto_schema(
+#         operation_description="获取热门商品信息*",
+#         responses={200: "success"
+#                    },
+#         security=[]
+#     )
+#     def get(self, request, format=None):
+#         tag = PTag.objects.get(name='热门商品')
+#         p = tag.product.all()
+#         serializer = ProductAllSerializer(p, many=True)
+#         return Response().successMessage({"hotgoods": serializer.data}, status=status.HTTP_200_OK)
 
 
 '''GU-新版替换接口'''
@@ -243,18 +243,18 @@ class hotgoods2(APIView):
 #         return Response().successMessage({"newgoods":serializer.data},status=status.HTTP_200_OK)
 
 
-class newgoods2(APIView):
-    @swagger_auto_schema(
-        operation_description="获取新品商品信息*",
-        responses={200: "success"
-                   },
-        security=[]
-    )
-    def get(self, request, format=None):
-        tag = PTag.objects.get(name='新品上架')
-        p = tag.product.all()
-        serializer = ProductAllSerializer(p, many=True)
-        return Response().successMessage({"newgoods": serializer.data}, status=status.HTTP_200_OK)
+# class newgoods2(APIView):
+#     @swagger_auto_schema(
+#         operation_description="获取新品商品信息*",
+#         responses={200: "success"
+#                    },
+#         security=[]
+#     )
+#     def get(self, request, format=None):
+#         tag = PTag.objects.get(name='新品上架')
+#         p = tag.product.all()
+#         serializer = ProductAllSerializer(p, many=True)
+#         return Response().successMessage({"newgoods": serializer.data}, status=status.HTTP_200_OK)
 
 
 '''GU-新版替换接口'''
@@ -273,18 +273,18 @@ class newgoods2(APIView):
 #         return Response().successMessage({"disgoods":serializer.data},status=status.HTTP_200_OK)
 
 
-class disgoods2(APIView):
-    @swagger_auto_schema(
-        operation_description="获取折扣商品信息*",
-        responses={200: "success"
-                   },
-        security=[]
-    )
-    def get(self, request, format=None):
-        tag = PTag.objects.get(name='降价促销')
-        p = tag.product.all()
-        serializer = ProductAllSerializer(p, many=True)
-        return Response().successMessage({"disgoods": serializer.data}, status=status.HTTP_200_OK)
+# class disgoods2(APIView):
+#     @swagger_auto_schema(
+#         operation_description="获取折扣商品信息*",
+#         responses={200: "success"
+#                    },
+#         security=[]
+#     )
+#     def get(self, request, format=None):
+#         tag = PTag.objects.get(name='降价促销')
+#         p = tag.product.all()
+#         serializer = ProductAllSerializer(p, many=True)
+#         return Response().successMessage({"disgoods": serializer.data}, status=status.HTTP_200_OK)
 
 
 '''GU-新版替换接口'''

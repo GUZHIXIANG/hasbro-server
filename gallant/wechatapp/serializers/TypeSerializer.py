@@ -50,7 +50,11 @@ class PTypeSerializer(serializers.ModelSerializer):
         return obj.name
 
     def get_typeName(self, obj):
-        return obj.parent.id
+        p = obj.parent
+        if p:
+            return p.id
+        else:
+            return None
     
     def get_desc(self, obj):
         return obj.get_desc_display()

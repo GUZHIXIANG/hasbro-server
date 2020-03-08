@@ -47,7 +47,7 @@ class itemtype2(APIView):
     @swagger_auto_schema(
         operation_description="获取商品分类接口设定2",
         manual_parameters=[
-            openapi.Parameter("parent_id", openapi.IN_QUERY, description="父ID",
+            openapi.Parameter("currentTypeId", openapi.IN_QUERY, description="父ID",
                               type=openapi.TYPE_STRING),
         ],
         responses={200: "success"
@@ -56,12 +56,21 @@ class itemtype2(APIView):
     )
     def get(self, request, format=None):
 
-        parent_id = request.GET.get('parent_id')
-        ptypes = PType.objects.filter(parent=parent_id)
-        if ptypes.exists():
-            ptypes_serializer = PTypeSerializer(ptypes, many=True)
-            message = "查询成功"
-            return Response().successMessage(status=status.HTTP_200_OK, message=message, data=ptypes_serializer.data)
-        else:  # 资源不存在
-            message = "查询成功"
-            return Response().successMessage(status=status.HTTP_200_OK, message=message, data=[])
+        leftlist = PType.objects.filter(parent=1)
+        leftlist_serializer = PTypeSerializer(leftlist, many=True)
+        leftlist_data = leftlist_serializer.data.copy()
+        new_leftlist_data = []
+        for i,x in enumerate(leftlist_data):
+            x['order_id'] = i+1
+            new_leftlist_data.append(x)
+        
+        currentTypeId = request.GET.get('currentTypeId')
+        currenttype = PType.objects.get(id=currentTypeId)
+        currenttype_serializer = PTypeSerializer(currenttype)
+
+        ptypes = PType.objects.filter(parent=currentTypeId)
+        ptypes_serializer = PTypeSerializer(ptypes, many=True)
+
+        message = '查询成功'
+        return Response().successMessage(status=status.HTTP_200_OK, message=message, data={"typeList": new_leftlist_data, "currentCategory": ptypes_serializer.data, "banner": currenttype_serializer.data})
+        

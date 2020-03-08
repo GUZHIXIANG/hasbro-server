@@ -58,9 +58,9 @@ urlpatterns = [
      # path('home/newgoods', newgoods.as_view(), name='new'),
      # path('home/disgoods', disgoods.as_view(), name='dis'),
      # new_version
-     path('home/hotgoods', hotgoods2.as_view(), name='hot'),
-     path('home/newgoods', newgoods2.as_view(), name='new'),
-     path('home/disgoods', disgoods2.as_view(), name='dis'),
+     # path('home/hotgoods', hotgoods2.as_view(), name='hot'),
+     # path('home/newgoods', newgoods2.as_view(), name='new'),
+     # path('home/disgoods', disgoods2.as_view(), name='dis'),
      path('home/all', homepage2.as_view(), name='homepage'),
 
      # 商品详情
