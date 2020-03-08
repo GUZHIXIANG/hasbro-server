@@ -118,7 +118,7 @@ class PTypeImage(models.Model):
     ptype = models.OneToOneField(
         PType, on_delete=models.CASCADE,related_name='type_image', verbose_name='商品类型',default=1)
     image = StdImageField(verbose_name="图片路径", upload_to='PTypeImage', variations={
-                          'thumbnail': (10, 10), 'medium': (20, 20), 'large': (100, 75)}, default='')
+                          'thumbnail': (10, 10), 'medium': (20, 20)}, default='')
 
     def __str__(self):
         return self.image.__str__()
@@ -148,11 +148,29 @@ class PTypeImage(models.Model):
     image_medium.short_description = '中号图'
     image_medium.allow_tags = True
 
+
+class PTypePoster(models.Model):
+    '''商品类型海报'''
+    ptype = models.OneToOneField(
+        PType, on_delete=models.CASCADE, related_name='type_poster', verbose_name='商品类型', default=1)
+    image = StdImageField(verbose_name="图片路径", upload_to='PTypeImage', variations={'large': (100, 75)}, default='')
+    text = models.CharField(verbose_name='图片配文',max_length=50,blank=False,default='')
+
+    def __str__(self):
+        return self.image.__str__()
+
+    __unicode__ = '__str__'
+
+    class Meta:
+        app_label = 'wechatapp'
+        verbose_name = '商品类型海报*'
+        verbose_name_plural = '商品类型海报管理*'
+
     def image_large(self):
         if self.image:
             return str('<img src="%s" />' % self.image.large.url)
         else:
             return u'上传图片'
 
-    image_large.short_description = '大号图'
+    image_large.short_description = '效果图'
     image_large.allow_tags = True

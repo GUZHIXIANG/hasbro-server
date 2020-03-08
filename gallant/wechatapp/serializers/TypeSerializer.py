@@ -18,6 +18,14 @@ class ProductMainCategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+'''#######################################'''
+
+
+class PTypePosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PTypePoster
+        fields = '__all__'
+
 class PTypeImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PTypeImage
@@ -29,10 +37,12 @@ class PTypeSerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
     image = serializers.CharField(source='type_image.image')
+    poster = serializers.CharField(source='type_poster.image')
+    poster_text = serializers.CharField(source='type_poster.text')
 
     class Meta:
         model = PType
-        fields = ('id','parent','name','desc','image')
+        fields = ('id', 'parent', 'name', 'desc', 'image', 'poster', 'poster_text')
 
     def get_parent(self, obj):
         return obj.parent.id
