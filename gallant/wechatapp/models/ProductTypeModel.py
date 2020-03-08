@@ -93,7 +93,7 @@ class PType(models.Model):
     parent = models.ForeignKey(
         'self', on_delete=models.CASCADE, blank=True, null=True, verbose_name='父类型')
     name = models.CharField(
-        verbose_name='类型名称', max_length=20, unique=True)
+        verbose_name='类型', max_length=20, unique=True)
     CHOICES = ((1, '一级分类'),(2, '二级分类'),(3, '三级分类'))
     desc = models.IntegerField(
         verbose_name='属性', choices=CHOICES, blank=True)

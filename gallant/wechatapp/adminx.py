@@ -77,7 +77,7 @@ xadmin.site.register(AdvPicModel,AdvPicAdmin)
 @xadmin.sites.register(PTypeImage)
 class PTypeImageAdmin(object):
     '''商品类型图片管理'''
-    list_display = ('ptype', 'image_thumbnail',
+    list_display = ('ptype', 'image', 'image_thumbnail',
                     'image_medium', 'image_large')
     search_fields = ('ptype__name',)
 
@@ -93,7 +93,7 @@ class PTypeImageStackInline(object):
 @xadmin.sites.register(PType)
 class PTypeAdmin(object):
     '''商品类型管理'''
-    list_display = ('name', 'parent', 'full_name', 'desc')
+    list_display = ('name', 'parent', 'desc', 'full_name')
     search_fields = ('name', 'parent')
     list_editable = ('parent', 'desc')
     list_filter = ('parent', 'desc')
@@ -107,7 +107,6 @@ class PTypeAdmin(object):
                 continue
             fname.append(tmp.name.__str__())
             tmp = tmp.parent
-            print('++++++++',tmp)
             c += 1 
         return '|'.join(fname[::-1])
     full_name.short_description = '全称'
@@ -132,7 +131,6 @@ class PtagAdmin(object):
 '''##########################################'''
 '''############### 商品信息管理 ###############'''
 '''##########################################'''
-
 
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
