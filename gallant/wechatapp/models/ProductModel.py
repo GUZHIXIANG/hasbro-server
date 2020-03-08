@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from stdimage.models import StdImageField
-from wechatapp.models.ProductTypeModel import ProductType,PType
+from wechatapp.models.ProductTypeModel import *
 
 # 商品基础信息表
 class ProductBaseInfo(models.Model):

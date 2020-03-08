@@ -10,7 +10,7 @@ from wechatapp.views.SearchManager import itemSearch,typeForItem
 from wechatapp.views.TypeManager import *
 from wechatapp.views.CheckOutManager import checkOut
 
-from wechatapp.views.GoodsListManager import goodsList
+# from wechatapp.views.GoodsListManager import goodsList
 urlpatterns = [
 
     # ok
@@ -48,7 +48,7 @@ urlpatterns = [
      # path('product/itemtag', itemtag.as_view(), name='itemtag'),
 
      # 商品标签
-     path('product/goodsList', goodsList.as_view(), name='goodsList'),
+     # path('product/goodsList', goodsList.as_view(), name='goodsList'),
      
      
      # 首页

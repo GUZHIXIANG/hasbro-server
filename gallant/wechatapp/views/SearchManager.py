@@ -1,8 +1,8 @@
 from wechatapp.views import *
 # 模型
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag)
+from wechatapp.models.ProductModel import *
 # 序列器
-from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
+from wechatapp.serializers.ProductBaseInfoSerializer import *
 
 # 商品搜索栏支持返回搜索商品用的
 
@@ -54,4 +54,4 @@ class typeForItem(APIView):
         productType = request.GET['productType']
         product = ProductBaseInfo.objects.filter(productType=productType)
         serializer = ProductSerializer(product,many=True)
-        return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
+        return Response().successMessage({"items":serializer.data},status=status.HTTP_200_OK)
