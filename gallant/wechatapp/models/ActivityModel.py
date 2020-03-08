@@ -7,7 +7,6 @@ from stdimage.models import StdImageField
 from wechatapp.models.StoreModel import Store
 
 
-
 # 活动信息表
 class Activity(models.Model):
     # 父活动 ----- 自关联
@@ -25,13 +24,13 @@ class Activity(models.Model):
     # activity_store = models.ManyToManyField(
     #     Store, through='ActivityStore',verbose_name='活动门店')
     activity_store = models.ManyToManyField(
-        Store, verbose_name='活动门店',null=True)
+        Store, verbose_name='活动门店',null=True,blank=True)
     # 活动开始时间
     activity_start_datetime = models.DateTimeField(
-        verbose_name='活动开始时间', default=timezone.now)
+        verbose_name='开始时间', default=timezone.now)
     # 活动结束时间
     activity_end_datetime = models.DateTimeField(
-        verbose_name='活动结束时间', default=timezone.now)
+        verbose_name='结束时间', default=timezone.now)
     # 创建时间
     activity_create_time = models.DateTimeField(verbose_name='创建时间',auto_now_add=True)
     # 操作时间
@@ -44,7 +43,7 @@ class Activity(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'Activity'
+        verbose_name = '活动信息'
         verbose_name_plural = '活动信息管理'
 
 
@@ -54,7 +53,7 @@ class ActivityType(models.Model):
     activity_type = models.CharField(verbose_name='活动类型',max_length=16,unique=True)
     # 类型描述
     type_description = models.CharField(
-        verbose_name='类型描述', max_length=100,null=True)
+        verbose_name='类型描述', max_length=100,null=True,blank=True)
 
     def __str__(self):
         return self.activity_type.__str__()
@@ -63,7 +62,7 @@ class ActivityType(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityType'
+        verbose_name = '活动类型'
         verbose_name_plural = '活动类型管理'
 
 # 活动图片表
@@ -87,8 +86,8 @@ class ActivityImage(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityImage'
-        verbose_name_plural = '活动图片'
+        verbose_name = '活动图片'
+        verbose_name_plural = '活动图片管理'
 
     def image_img(self):
         if self.image:
@@ -117,5 +116,5 @@ class ActivityText(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = 'ActivityText'
-        verbose_name_plural = '活动文本'
+        verbose_name = '活动文本'
+        verbose_name_plural = '活动文本管理'

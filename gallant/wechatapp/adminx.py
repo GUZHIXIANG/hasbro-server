@@ -3,8 +3,8 @@ from xadmin import views
 from django.contrib import admin
 
 from .models.UserModel import UserProfile
-from .models.ProductTypeModel import ProductMainCategory,ProductSecondCategory,ProductType
-from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag
+from .models.ProductTypeModel import *
+from .models.ProductModel import *
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
 
@@ -71,18 +71,83 @@ class AdvPicAdmin(object):
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 '''##########################################'''
-'''############### 商品信息管理 ###############'''
+'''############### 商品类型图片管理 ###############'''
+'''##########################################'''
+
+@xadmin.sites.register(PTypeImage)
+class PTypeImageAdmin(object):
+    '''商品类型图片管理'''
+    list_display = ('ptype', 'image', 'image_thumbnail',
+                    'image_medium', 'image_large')
+    search_fields = ('ptype__name',)
+
+
+'''##########################################'''
+'''############### 商品类型管理 ###############'''
+'''##########################################'''
+
+class PTypeImageStackInline(object):
+    model = PTypeImage
+    extra = 1
+
+@xadmin.sites.register(PType)
+class PTypeAdmin(object):
+    '''商品类型管理'''
+    list_display = ('name', 'parent', 'desc', 'full_name')
+    search_fields = ('name', 'parent')
+    list_editable = ('parent', 'desc')
+    list_filter = ('parent', 'desc')
+
+    def full_name(self,obj):
+        fname = [obj.name.__str__()]
+        tmp = obj.parent
+        c = 0
+        while tmp != None:
+            if c > 10: # 限制循环
+                continue
+            fname.append(tmp.name.__str__())
+            tmp = tmp.parent
+            c += 1 
+        return '|'.join(fname[::-1])
+    full_name.short_description = '全称'
+
+    inlines = [PTypeImageStackInline]
+
+
+'''##########################################'''
+'''############### 商品标签管理 ###############'''
 '''##########################################'''
 
 
+@xadmin.sites.register(PTag)
+class PtagAdmin(object):
+    '''商品标签管理'''
+    list_display = ('name', 'description', 'product')
+    search_fields = ('product__productId', 'product__productName',
+                     'product__systemCode', 'product__barCode')
+    filter_horizontal = ('product',)
+    style_fields = {'product': 'm2m_transfer'}
+
+'''##########################################'''
+'''############### 商品信息管理 ###############'''
+'''##########################################'''
+
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
-    list_display = ('productId', 'productName', "image_img",
-                    'productType', 'color', 'norms', 'price', 'quantity', 'shell')
+    '''商品信息管理'''
+    list_display = ('productId', 'productName',  'systemCode', 'barCode', "image_img",
+                    'productType', 'color', 'norms', 'weight', 'price', 'quantity', 'shell','tag')
+    search_fields = ('productId', 'productName', 'systemCode', 'barCode')
+    list_filter = ('productType', 'shell')
+    list_editable = ('shell',)
 
+    def tag(self,obj):
+        return '.'.join([x.name for x in obj.tags.all()])
+    tag.short_description = '标签'
     #excel导入导出功能
     list_export = ['xls', 'xml', 'json']
     import_excel = True
+
 
     def post(self, request, *args, **kwargs):
         #  导入逻辑
@@ -90,7 +155,7 @@ class ProductBaseInfoAdmin(object):
             pass
             excel_file = request.FILES.get('excel')
             file_type = excel_file.name.split('.')[1]
-            if file_type in ['xlsx', 'xls']:   # 支持这两种文件格式
+            if file_type in ['xlsx', 'xls']:  # 支持这两种文件格式
                 # 打开工作文件
                 data = xlrd.open_workbook(
                     filename=None, file_contents=excel_file.read())
@@ -100,27 +165,29 @@ class ProductBaseInfoAdmin(object):
                     with transaction.atomic():
                         for row in range(1, rows):
                             vals = table.row_values(row)
+                            print(vals)
                             CHOICE_dict = {'上架': 'on', '下架': 'off'}
                             ProductBaseInfo.objects.create(
-                                productName=vals[0],
-                                productType=1,
+                                productId=vals[0],
+                                productName=vals[1],
                                 systemCode=vals[2],
                                 barCode=vals[3],
-                                color=vals[4],
-                                norms=vals[5],
-                                weight=vals[6],
-                                price=vals[7],
-                                description=vals[8],
-                                brief=vals[9],
-                                brand=vals[10],
                                 smallurl='',
-                                shell=CHOICE_dict.get(vals[12]),
-                                quantity=vals[13]
-
+                                productType=ProductType.objects.get(
+                                    typeChildsName=vals[5]),
+                                color=vals[6],
+                                norms=vals[7],
+                                weight=vals[8],
+                                price=vals[9],
+                                quantity=vals[10],
+                                shell=CHOICE_dict.get(vals[11]),
+                            
                             )
                 except Exception as e:
+                    print(e)
                     return e
-        return super(ProductBaseInfoAdmin, self).post(request, args, kwargs)
+        return super().post(request, args, kwargs)
+        
 
 '''##########################################'''
 '''############### 报名信息查看 ###############'''
@@ -129,12 +196,16 @@ class ProductBaseInfoAdmin(object):
 
 @xadmin.sites.register(SignUp)
 class SignUpAdmin(object):
+    '''报名信息查看'''
     list_display = ('user', 'activity', 'store', 'signup_name',
                     'signup_phone', 'signup_create_time', 'signup_operate_time')
     readonly_fields = ('user', 'activity', 'store', 'signup_name',
                        'signup_phone', 'signup_create_time', 'signup_operate_time')
     search_fields = ('activity__activity_name', 'store__store_name')
     list_filter = ('activity', 'store')
+
+    refresh_times = [300, 600]
+
     List_display_links = None  #禁用编辑链接
 
     def has_add_permission(self):
@@ -150,6 +221,7 @@ class SignUpAdmin(object):
 
 @xadmin.sites.register(Store)
 class StoreAdmin(object):
+    '''门店信息管理'''
     list_display = ('store_name', 'store_telephone',
                     'store_address', 'store_area')
     search_fields = ('store_name', 'store_telephone',
@@ -163,6 +235,7 @@ class StoreAdmin(object):
 
 @xadmin.sites.register(ActivityType)
 class ATypeAdmin(object):
+    '''活动类型管理'''
     list_display = ('activity_type', 'type_description')
     search_fields = ('activity_type',)
 
@@ -182,13 +255,14 @@ class ATextStackInline(object):
 
 @xadmin.sites.register(Activity)
 class ActivityAdmin(object):
+    '''活动信息管理'''
     list_display = ('activity_name',
                     'activity_type', 'activity_store', 'activity_start_datetime', 'activity_end_datetime', 'super_activity')
     search_fields = ('activity_name',)
     list_filter = ('activity_type', 'activity_store')
     ordering = ('activity_start_datetime', 'activity_end_datetime')
 
-    filter_horizontal = ('activity_store', 'activity_type')
+    filter_horizontal = ('activity_store',)
     style_fields = {'activity_store': 'm2m_transfer'}
     inlines = [AImageStackInline, ATextStackInline]  # 关联子表
 

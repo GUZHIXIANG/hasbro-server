@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag)
+from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag,PTag)
 
 
 
@@ -24,11 +24,20 @@ class ProductUrlSerializer(serializers.ModelSerializer):
         model = ProductUrl
         fields = ("url",)
 
+
+# TODO() 这个版本需要被淘汰
 class ProductTagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductTag
         fields = ("tag",)
+
+
+class PTagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PTag
+        fields = "__all__"
 
 
 class ProductAllSerializer(serializers.ModelSerializer):
