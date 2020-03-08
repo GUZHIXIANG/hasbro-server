@@ -42,25 +42,21 @@ xadmin.site.register(UserProfile,UserProfileAdmin)
 
 # 商品类别管理
 
-class ProductMainCategoryAdmin(object):
-    list_display = ('id', 'typeName')
-xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
+# class ProductMainCategoryAdmin(object):
+#     list_display = ('id', 'typeName')
+# xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
 
-class ProductSecondCategoryAdmin(object):
-    list_display = ('id', 'typeName','typeChildName','image_img','image_img1','banner_name')
-xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
+# class ProductSecondCategoryAdmin(object):
+#     list_display = ('id', 'typeName','typeChildName','image_img','image_img1','banner_name')
+# xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
 
-class ProductTypeAdmin(object):
-    list_display = ('id', 'typeChildName','typeChildsName','image_img')
-xadmin.site.register(ProductType,ProductTypeAdmin)
+# class ProductTypeAdmin(object):
+#     list_display = ('id', 'typeChildName','typeChildsName','image_img')
+# xadmin.site.register(ProductType,ProductTypeAdmin)
 
-class ProductUrlAdmin(object):
-    list_display = ('productbaseinfo','image_img','url')
-xadmin.site.register(ProductUrl,ProductUrlAdmin)
-
-class ProductTagAdmin(object):
-    list_display = ('productbaseinfo','tag')
-xadmin.site.register(ProductTag,ProductTagAdmin)
+# class ProductTagAdmin(object):
+#     list_display = ('productbaseinfo','tag')
+# xadmin.site.register(ProductTag,ProductTagAdmin)
 
 class MyTrollyAdmin(object):
     list_display = ('user','productbaseinfo','nums','checkbox')
@@ -69,6 +65,15 @@ xadmin.site.register(MyTrolly,MyTrollyAdmin)
 class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
+
+'''##########################################'''
+'''############### 商品详情图片管理 ###############'''
+'''##########################################'''
+
+
+@xadmin.sites.register(ProductUrl)
+class ProductUrlAdmin(object):
+    list_display = ('productbaseinfo', 'image_img', 'url')
 
 '''##########################################'''
 '''############### 商品类型海报管理 ###############'''
@@ -149,6 +154,11 @@ class PtagAdmin(object):
 '''############### 商品信息管理 ###############'''
 '''##########################################'''
 
+
+class ProductUrlStackInline(object):
+    model = ProductUrl
+    extra = 1
+
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
     '''商品信息管理'''
@@ -157,6 +167,8 @@ class ProductBaseInfoAdmin(object):
     search_fields = ('productId', 'productName', 'systemCode', 'barCode')
     list_filter = ('productType', 'shell')
     list_editable = ('shell',)
+
+    inlines = [ProductUrlStackInline]
 
     def tag(self,obj):
         return '.'.join([x.name for x in obj.tags.all()])

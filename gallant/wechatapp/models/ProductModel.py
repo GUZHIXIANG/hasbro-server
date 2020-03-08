@@ -83,8 +83,8 @@ class ProductUrl(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = '商品图片管理'
-        verbose_name_plural = '商品图片管理'
+        verbose_name = '商品详情图片'
+        verbose_name_plural = '商品详情图片管理'
     
     def image_img(self):
         if self.url:
@@ -95,27 +95,27 @@ class ProductUrl(models.Model):
     image_img.short_description = '商品展示缩略图'
     image_img.allow_tags = True
 
-class ProductTag(models.Model):
+# class ProductTag(models.Model):
 
-    tag_type = (
-        ('h', '热门商品'),
-        ('d', '降价促销'),
-        ('n', '新品上架'),
-    )
+#     tag_type = (
+#         ('h', '热门商品'),
+#         ('d', '降价促销'),
+#         ('n', '新品上架'),
+#     )
 
-    # 外键关联了
-    productbaseinfo = models.OneToOneField(ProductBaseInfo,on_delete=models.CASCADE,primary_key=True)
+#     # 外键关联了
+#     productbaseinfo = models.OneToOneField(ProductBaseInfo,on_delete=models.CASCADE,primary_key=True)
     
-    # 标签
-    tag = models.CharField(max_length=1, choices=tag_type)
+#     # 标签
+#     tag = models.CharField(max_length=1, choices=tag_type)
 
-    def __str__(self):
-        return self.tag.__str__()
+#     def __str__(self):
+#         return self.tag.__str__()
 
-    class Meta:
-        app_label = 'wechatapp'
-        verbose_name = '商品标签管理'
-        verbose_name_plural = '商品标签管理'
+#     class Meta:
+#         app_label = 'wechatapp'
+#         verbose_name = '商品标签管理'
+#         verbose_name_plural = '商品标签管理'
 
 
 '''#######################################'''
