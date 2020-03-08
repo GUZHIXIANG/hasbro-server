@@ -3,11 +3,11 @@ import xlrd
 from wechatapp.views import *
 
 # 模型
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag,PTag)
-from wechatapp.models.ProductTypeModel import ProductType,ProductSecondCategory,ProductMainCategory,PType,PTypeImage
+from wechatapp.models.ProductModel import *
+from wechatapp.models.ProductTypeModel import *
 from wechatapp.models.AdvModel import AdvPicModel
 # 序列器
-from wechatapp.serializers.ProductBaseInfoSerializer import (ProductSerializer,ProductUrlSerializer,ProductTagSerializer,ProductAllSerializer,ItemsAllSerializer)
+from wechatapp.serializers.ProductBaseInfoSerializer import *
 from wechatapp.serializers.AdvSeralizer import AdvPicSerializer
 from wechatapp.serializers.TypeSerializer import *
 

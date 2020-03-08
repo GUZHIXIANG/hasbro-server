@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from wechatapp.models.ProductTypeModel import ProductSecondCategory,ProductType,ProductMainCategory,PType,PTypeImage
+from wechatapp.models.ProductTypeModel import *
 
 
 class ProductSecondCategorySerializer(serializers.ModelSerializer):
@@ -28,22 +28,16 @@ class PTypeSerializer(serializers.ModelSerializer):
 
     parent = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
-    # image = serializers.SerializerMethodField()
-    images = serializers.SerializerMethodField()
+    image = serializers.CharField(source='type_image.image')
 
     class Meta:
         model = PType
-        fields = ('id','parent','name','desc','images')
-    
+        fields = ('id','parent','name','desc','image')
+
     def get_parent(self, obj):
         return obj.parent.id
     
     def get_desc(self, obj):
         return obj.get_desc_display()
 
-    # def get_image(self, obj):
-    #     return obj.type_image.get().image
-
-    def get_images(self, obj):
-        query_set = obj.type_image.all()
-        return [{'image': obj.image.thumbnail.__str__()} for obj in query_set]
+    

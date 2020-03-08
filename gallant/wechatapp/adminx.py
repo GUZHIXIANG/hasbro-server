@@ -3,8 +3,8 @@ from xadmin import views
 from django.contrib import admin
 
 from .models.UserModel import UserProfile
-from .models.ProductTypeModel import ProductMainCategory, ProductSecondCategory, ProductType,PType,PTypeImage
-from .models.ProductModel import ProductBaseInfo,ProductUrl,ProductTag,PTag
+from .models.ProductTypeModel import *
+from .models.ProductModel import *
 from .models.TrollyModel import MyTrolly
 from .models.AdvModel import AdvPicModel
 

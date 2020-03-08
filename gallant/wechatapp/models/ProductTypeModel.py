@@ -114,8 +114,8 @@ class PType(models.Model):
     
 
 class PTypeImage(models.Model):
-    '''商品类型图片'''
-    ptype = models.ForeignKey(
+    '''商品类型图标'''
+    ptype = models.OneToOneField(
         PType, on_delete=models.CASCADE,related_name='type_image', verbose_name='商品类型',default=1)
     image = StdImageField(verbose_name="图片路径", upload_to='PTypeImage', variations={
                           'thumbnail': (10, 10), 'medium': (20, 20), 'large': (100, 75)}, default='')
@@ -127,8 +127,8 @@ class PTypeImage(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = '商品类型图片*'
-        verbose_name_plural = '商品类型图片管理*'
+        verbose_name = '商品类型图标*'
+        verbose_name_plural = '商品类型图标管理*'
 
     def image_thumbnail(self):
         if self.image:
