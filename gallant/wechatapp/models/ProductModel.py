@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from stdimage.models import StdImageField
-from wechatapp.models.ProductTypeModel import ProductType
+from wechatapp.models.ProductTypeModel import ProductType,PType
 
 # 商品基础信息表
 class ProductBaseInfo(models.Model):
@@ -17,7 +17,8 @@ class ProductBaseInfo(models.Model):
     # 品名
     productName = models.CharField(verbose_name='商品名称', max_length=255)
     # 分类 ------- 关联类目信息
-    productType = models.ForeignKey(ProductType, on_delete=models.CASCADE,verbose_name='商品分类')
+    productType = models.ForeignKey(
+        PType, on_delete=models.CASCADE, verbose_name='商品分类',blank=False,default=1)
     # 系统编码
     systemCode = models.BigIntegerField(verbose_name='系统编码', blank=True)
     # 条形编码

@@ -53,3 +53,18 @@ class ItemsAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductBaseInfo
         fields = ("productId","productName","url","price",'color','norms','weight','descripation','shell',"quantity")
+
+
+class ProductSerializer2(serializers.ModelSerializer):
+    # serializers.CharField(source='productType.parent')
+    parent_type = serializers.SerializerMethodField()
+    class Meta:
+        model = ProductBaseInfo
+        fields = "__all__"#("productId", "productName", "smallurl", "price")
+
+    def get_parent_type(self,obj):
+        p = obj.productType.parent
+        if p:
+            return p.id
+        else:
+            return None

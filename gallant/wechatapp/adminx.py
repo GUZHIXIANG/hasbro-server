@@ -71,20 +71,37 @@ class AdvPicAdmin(object):
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 '''##########################################'''
-'''############### 商品类型图片管理 ###############'''
+'''############### 商品类型海报管理 ###############'''
 '''##########################################'''
+
+@xadmin.sites.register(PTypePoster)
+class PTypePosterAdmin(object):
+    '''商品类型海报管理'''
+    list_display = ('ptype', 'image', 'text', 'image_large')
+    search_fields = ('ptype__name',)
+
+
+'''##########################################'''
+'''############### 商品类型图标管理 ###############'''
+'''##########################################'''
+
 
 @xadmin.sites.register(PTypeImage)
 class PTypeImageAdmin(object):
-    '''商品类型图片管理'''
+    '''商品类型图标管理'''
     list_display = ('ptype', 'image', 'image_thumbnail',
-                    'image_medium', 'image_large')
+                    'image_medium')
     search_fields = ('ptype__name',)
 
 
 '''##########################################'''
 '''############### 商品类型管理 ###############'''
 '''##########################################'''
+
+
+class PTypePosterStackInline(object):
+    model = PTypePoster
+    extra = 1
 
 class PTypeImageStackInline(object):
     model = PTypeImage
@@ -111,7 +128,7 @@ class PTypeAdmin(object):
         return '|'.join(fname[::-1])
     full_name.short_description = '全称'
 
-    inlines = [PTypeImageStackInline]
+    inlines = [PTypePosterStackInline, PTypeImageStackInline]
 
 
 '''##########################################'''
@@ -173,8 +190,8 @@ class ProductBaseInfoAdmin(object):
                                 systemCode=vals[2],
                                 barCode=vals[3],
                                 smallurl='',
-                                productType=ProductType.objects.get(
-                                    typeChildsName=vals[5]),
+                                productType=PType.objects.get(
+                                    name=vals[5]),
                                 color=vals[6],
                                 norms=vals[7],
                                 weight=vals[8],

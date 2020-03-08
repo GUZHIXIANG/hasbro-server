@@ -4,12 +4,13 @@ from wechatapp.views.SignUpManager import *
 from wechatapp.views.ActivityManager import *
 from wechatapp.views.StoreManager import *
 from wechatapp.views.AddressManager import *
-from wechatapp.views.ProductsInfoManager import items, itemsdetail, homepage,hotgoods2, disgoods2, newgoods2,homepage2
+from wechatapp.views.ProductsInfoManager import *
 from wechatapp.views.TrollyManager import trolly,trollynum,trollycheckbox
 from wechatapp.views.SearchManager import itemSearch,typeForItem
-from wechatapp.views.TypeManager import itemtype
+from wechatapp.views.TypeManager import *
 from wechatapp.views.CheckOutManager import checkOut
 
+from wechatapp.views.GoodsListManager import goodsList
 urlpatterns = [
 
     # ok
@@ -40,14 +41,19 @@ urlpatterns = [
 
        # 商品种类
      # ok
-     path('product/itemtype', itemtype.as_view(), name='itemtype'),
+     # path('product/itemtype', itemtype.as_view(), name='itemtype'),
+     path('product/itemtype', itemtype2.as_view(), name='itemtype'),
      path('product/items', items.as_view(), name='items'),
      # path('product/itemspic', itemurl.as_view(), name='itemsurl'),
      # path('product/itemtag', itemtag.as_view(), name='itemtag'),
 
+     # 商品标签
+     path('product/goodsList', goodsList.as_view(), name='goodsList'),
+     
+     
      # 首页
      # ok
-     path('home/all', homepage.as_view(), name='homepage'),
+     # path('home/all', homepage.as_view(), name='homepage'),
      # path('home/hotgoods', hotgoods.as_view(), name='hot'),
      # path('home/newgoods', newgoods.as_view(), name='new'),
      # path('home/disgoods', disgoods.as_view(), name='dis'),
@@ -55,7 +61,7 @@ urlpatterns = [
      path('home/hotgoods', hotgoods2.as_view(), name='hot'),
      path('home/newgoods', newgoods2.as_view(), name='new'),
      path('home/disgoods', disgoods2.as_view(), name='dis'),
-     path('home/all2', homepage2.as_view(), name='homepage2'),
+     path('home/all', homepage2.as_view(), name='homepage'),
 
      # 商品详情
      # ok

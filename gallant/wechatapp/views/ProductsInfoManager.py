@@ -287,39 +287,39 @@ class disgoods2(APIView):
         return Response().successMessage({"disgoods": serializer.data}, status=status.HTTP_200_OK)
 
 
+'''GU-新版替换接口'''
+# class homepage(APIView):
+#     @swagger_auto_schema(
+#     operation_description="获取商品首页所有信息",
+#     responses={200:"success"
+#     },
+#     security=[]
+#     )
+#     def get(self, request, format=None):
 
-class homepage(APIView):
-    @swagger_auto_schema(
-    operation_description="获取商品首页所有信息",
-    responses={200:"success"
-    },
-    security=[]
-    )
-    def get(self, request, format=None):
-
-        # 首页信息
-        type_list = ProductSecondCategory.objects.all() 
-        advpic = AdvPicModel.objects.all()
-        tag_hot = ProductBaseInfo.objects.filter(producttag__tag__contains='h')
-        tag_new = ProductBaseInfo.objects.filter(producttag__tag__contains='n')
-        tag_discount = ProductBaseInfo.objects.filter(producttag__tag__contains='d')
-        goodsCount = ProductBaseInfo.objects.all()
+#         # 首页信息
+#         type_list = ProductSecondCategory.objects.all() 
+#         advpic = AdvPicModel.objects.all()
+#         tag_hot = ProductBaseInfo.objects.filter(producttag__tag__contains='h')
+#         tag_new = ProductBaseInfo.objects.filter(producttag__tag__contains='n')
+#         tag_discount = ProductBaseInfo.objects.filter(producttag__tag__contains='d')
+#         goodsCount = ProductBaseInfo.objects.all()
         
-        rollAdvPic = AdvPicSerializer(advpic,many=True)
-        channel = ProductSecondCategorySerializer(type_list,many=True)
-        hotgoods = ProductAllSerializer(tag_hot,many=True)
-        newgoods = ProductAllSerializer(tag_new,many=True)
-        discountgoods = ProductAllSerializer(tag_discount,many=True)
-        goodsCount = len(goodsCount)
+#         rollAdvPic = AdvPicSerializer(advpic,many=True)
+#         channel = ProductSecondCategorySerializer(type_list,many=True)
+#         hotgoods = ProductAllSerializer(tag_hot,many=True)
+#         newgoods = ProductAllSerializer(tag_new,many=True)
+#         discountgoods = ProductAllSerializer(tag_discount,many=True)
+#         goodsCount = len(goodsCount)
         
         
-        return Response().successMessage({"hotgoods":hotgoods.data,
-                                          "newgoods":newgoods.data,
-                                          "discountgoods":discountgoods.data,
-                                          "rollAdvPic":rollAdvPic.data,
-                                          "channel":channel.data,
-                                          "goodsCount":goodsCount
-                                        },status=status.HTTP_200_OK)
+#         return Response().successMessage({"hotgoods":hotgoods.data,
+#                                           "newgoods":newgoods.data,
+#                                           "discountgoods":discountgoods.data,
+#                                           "rollAdvPic":rollAdvPic.data,
+#                                           "channel":channel.data,
+#                                           "goodsCount":goodsCount
+#                                         },status=status.HTTP_200_OK)
 
 
 class homepage2(APIView):

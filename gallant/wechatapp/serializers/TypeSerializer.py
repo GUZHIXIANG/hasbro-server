@@ -34,17 +34,22 @@ class PTypeImageSerializer(serializers.ModelSerializer):
 
 class PTypeSerializer(serializers.ModelSerializer):
 
-    parent = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
-    image = serializers.CharField(source='type_image.image')
-    poster = serializers.CharField(source='type_poster.image')
-    poster_text = serializers.CharField(source='type_poster.text')
+    url = serializers.CharField(source='type_image.image')
+    banner_url = serializers.CharField(source='type_poster.image')
+    banner_name = serializers.CharField(source='type_poster.text')
+    typeChildName = serializers.SerializerMethodField()
+    typeName = serializers.SerializerMethodField()
 
     class Meta:
         model = PType
-        fields = ('id', 'parent', 'name', 'desc', 'image', 'poster', 'poster_text')
+        fields = ('id', 'typeName', 'typeChildName', 'desc',
+                  'url', 'banner_url', 'banner_name')
 
-    def get_parent(self, obj):
+    def get_typeChildName(self,obj):
+        return obj.name
+
+    def get_typeName(self, obj):
         return obj.parent.id
     
     def get_desc(self, obj):
