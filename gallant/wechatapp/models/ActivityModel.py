@@ -1,9 +1,6 @@
 from django.db import models
 from django.utils import timezone
-<<<<<<< HEAD
-=======
 from stdimage.models import StdImageField
->>>>>>> ca8f7ff125819a352814fccefb61b1efcb5897a1
 from wechatapp.models.StoreModel import Store
 
 
