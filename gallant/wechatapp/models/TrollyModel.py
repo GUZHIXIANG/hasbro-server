@@ -20,7 +20,7 @@ class MyTrolly(models.Model):
     
     nums = models.IntegerField(blank=False,default=1)
  
-    checkbox = models.IntegerField(choices=CHOOSE,default=0)
+    checkbox = models.BooleanField(choices=CHOOSE,default=False)
     
     def __str__(self):
         return self.user.__str__()

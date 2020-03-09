@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from stdimage.models import StdImageField
 from wechatapp.models.StoreModel import Store
+ 
 
 
 # 活动信息表

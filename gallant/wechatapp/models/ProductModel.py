@@ -18,22 +18,22 @@ class ProductBaseInfo(models.Model):
     productName = models.CharField(verbose_name='商品名称', max_length=255)
     # 分类 ------- 关联类目信息
     productType = models.ForeignKey(
-        PType, on_delete=models.CASCADE, verbose_name='商品分类',blank=False,default=1)
+        PType, on_delete=models.CASCADE, verbose_name='商品分类',blank=False,default=1,related_name="product")
     # 系统编码
-    systemCode = models.BigIntegerField(verbose_name='系统编码', blank=True)
+    systemCode = models.BigIntegerField(verbose_name='系统编码', blank=True,null=True)
     # 条形编码
-    barCode = models.BigIntegerField(verbose_name='条形编码', blank=True)
+    barCode = models.BigIntegerField(verbose_name='条形编码', blank=True,null=True)
     # 颜色
-    color = models.CharField(verbose_name='颜色', max_length=255, blank=True)
+    color = models.CharField(verbose_name='颜色', max_length=255, blank=True,null=True)
     # 规格
-    norms = models.CharField(verbose_name='规格', max_length=255, blank=True)
+    norms = models.CharField(verbose_name='规格', max_length=255, blank=True,null=True)
     # 重量
-    weight = models.IntegerField(verbose_name='重量', blank=True)
+    weight = models.IntegerField(verbose_name='重量', blank=True,null=True)
     # 价格  
     price = models.IntegerField(verbose_name='价格', blank=False)
     
     # 商品详情
-    description = models.TextField(verbose_name='商品详情', blank=True)
+    description = models.TextField(verbose_name='商品详情', blank=True,null=True)
     # 商品简介
     brief = models.TextField(
         verbose_name='商品简介', blank=True, default="这里是商品简介")

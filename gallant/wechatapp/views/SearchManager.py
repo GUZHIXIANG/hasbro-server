@@ -3,6 +3,10 @@ from wechatapp.views import *
 from wechatapp.models.ProductModel import *
 # 序列器
 from wechatapp.serializers.ProductBaseInfoSerializer import *
+from wechatapp.serializers.TypeSerializer import *
+from wechatapp.models.ProductTypeModel import PType
+from django.db.models import Q
+from itertools import chain
 
 # 商品搜索栏支持返回搜索商品用的
 
@@ -32,9 +36,73 @@ class itemSearch(APIView):
     def get(self, request, format=None):
 
         keyword = request.GET['keyword']
-        product = ProductBaseInfo.objects.filter(productName__icontains=keyword)
-        serializer = ProductSerializer(product,many=True)
-        return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
+
+        # page = request.GET.get('page')
+        # size = request.GET.get('size')
+        #order = request.GET.get('order')
+        sortType = request.GET.get('sort')
+        categoryId = request.GET.get('categoryId')
+
+        filterCategory = PType.objects.filter(desc=3)
+        channel = PTypeSerializer(filterCategory, many=True)
+
+        goodList = list()
+        wordsList = list()
+        print("-------")
+        # 判断是否sortType 有 category 这个关键字在，说明要根据 类别过滤返回的商品
+        if sortType =='category':
+            # 当前类别
+            #try:
+            productsQuery = filterCategory.get(id=categoryId).product.filter(Q(productName__icontains=keyword) | Q(description__icontains=keyword) | Q(brief__icontains=keyword) | Q(brand__icontains=keyword)) # 直接搜索商品关键词           
+            
+            type_productsQuery = PType.objects.filter(name__icontains=keyword) # 通过商品类型搜索关键字
+            
+        
+            
+            # for i in type_productsQuery:
+            #     print(i.product.all())
+            
+            
+            productsQuerySerilizer = ProductSerializer(productsQuery,many=True)
+            
+            
+
+            # print("商品搜索数",productsQuery.__len__())
+            # print("类别搜索数",type_productsQuery)
+            
+
+            # goodList = ProductSerializer(goodList,many=True)
+            # product = filterCategory.get(id=categoryId).product.filter(tags__name="热门商品")
+            
+            return Response().successMessage({"goodsList": productsQuerySerilizer.data,"channel":channel.data}, status=status.HTTP_200_OK)
+            #except:
+                #return Response().errorMessage({"goodsList":[],"channel":channel.data}, status=status.HTTP_200_OK)
+
+        # if sortType=='price':
+            
+        #     try:
+        #         if order == "asc":
+        #             product = ProductBaseInfo.objects.filter(tags__name="热门商品").order_by("price")
+        #             goods = ProductSerializer(product,many=True)
+        #             return Response().successMessage({"goodsList": goods.data,"channel":channel.data}, status=status.HTTP_200_OK)
+        #         elif order == "desc":
+        #             product = ProductBaseInfo.objects.filter(tags__name="热门商品").order_by("-price")
+        #             goods = ProductSerializer(product,many=True)
+        #             return Response().successMessage({"goodsList": goods.data,"channel":channel.data}, status=status.HTTP_200_OK)
+        #         else:
+        #             return Response().errorMessage(status=status.HTTP_400_BAD_REQUEST)
+        #     except:
+        #         return Response().successMessage({"goodsList":[],"channel":channel.data}, status=status.HTTP_200_OK)
+
+        # if sortType=='default':
+        #     Products = PTag.objects.get(name='热门商品').product.all()
+        #     goods = ProductSerializer2(Products, many=True)
+        #     return Response().successMessage({"goodsList": goods.data,"channel":channel.data}, status=status.HTTP_200_OK)
+        
+        
+        # product = ProductBaseInfo.objects.filter(productName__icontains=keyword)
+        # serializer = ProductSerializer(product,many=True)
+        # return Response().successMessage(serializer.data,status=status.HTTP_200_OK)
 
 
 class typeForItem(APIView):

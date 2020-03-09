@@ -20,3 +20,6 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 __all__ = ["status","Response","APIView","requests","json","openapi","swagger_auto_schema","hashlib","logging"]
+
+# FIXME(GU)   存在会报错，需要调整位置
+# sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())

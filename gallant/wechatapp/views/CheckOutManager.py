@@ -30,7 +30,7 @@ class checkOut(APIView):
         # ----------------------------------------
         
     
-        userTrolly = MyTrolly.objects.filter(user=userpro).filter(checkbox=1)
+        userTrolly = MyTrolly.objects.filter(user=userpro).filter(checkbox=True)
         
         checkedGoodsList = list()  # 所选商品列表
         goodsTotalPrice = 0        # 计算商品总价

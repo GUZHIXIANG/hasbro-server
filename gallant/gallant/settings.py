@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'wechatapp.apps.WechatappConfig',
     'stdimage',
+    'newapp1.apps.Newapp1Config',
 ]
 
 MIDDLEWARE = [
@@ -54,8 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'wechatapp.middleware.ApiLoggingMiddleware',
-    'request_logging.middleware.LoggingMiddleware',
+    # 'request_logging.middleware.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'gallant.urls'
@@ -150,111 +150,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 
 # LOGGING settings
+# XXX(GU)  日志管理冗余严重需要改进，目前全部废除
 LOG_DIR = BASE_DIR + "/log"
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django.request': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',  # change debug level as appropiate
-#             'propagate': False,
-#         },
-#     },
-# }
-REQUEST_LOGGING_ENABLE_COLORIZE = False
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,  
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s FuncName:%(funcName)s LINE:%(lineno)d [%(levelname)s]- %(message)s'
-        },
-        'simple': {
-            'format': '%(asctime)s [%(levelname)s] - %(message)s'
-        },
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(message)s'
-        },
-        'normal': {
-            'format': '[{levelname}] {asctime} | {name}:{lineno} | {message}',
-            'style': '{',
-        },
-    },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'normal'
-        },
-        'default': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOG_DIR, 'info.log'),
-            'maxBytes': 1024*1024*50,   # 50 MB
-            'backupCount': 2,
-            'encoding': 'utf-8',
-            'formatter': 'normal',
-        },
-        'default_debug': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOG_DIR, 'debug.log'),
-            'maxBytes': 1024*1024*50,  # 50 MB
-            'backupCount': 2,
-            'encoding': 'utf-8',
-            'formatter': 'normal',
-        },
-        'request_handler': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOG_DIR, 'common.log'),
-            'maxBytes': 1024*1024*50,  # 50 MB
-            'backupCount': 2,
-            'encoding':'utf-8',
-            'formatter': 'normal',
-        },
-        'restful_api': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOG_DIR, 'api.log'),
-            'maxBytes': 1024*1024*50,  # 50 MB
-            'backupCount': 2,
-            'encoding': 'utf-8',
-            'formatter': 'normal',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['default_debug'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-        'django.request': {
-            'handlers': ['request_handler'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-        'common': {
-            'handlers': ['default'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-        'api': {
-            'handlers': ['restful_api'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    }
-}
-
