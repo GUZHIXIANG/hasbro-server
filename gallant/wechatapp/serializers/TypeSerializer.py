@@ -2,21 +2,29 @@ from rest_framework import serializers
 from wechatapp.models.ProductTypeModel import *
 
 
-class ProductSecondCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductSecondCategory
-        fields = "__all__"
+# class ProductSecondCategorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProductSecondCategory
+#         fields = "__all__"
 
-class ProductTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductType
-        fields = "__all__"
+# class ProductTypeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProductType
+#         fields = "__all__"
 
-class ProductMainCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductMainCategory
-        fields = "__all__"
+# class ProductMainCategorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProductMainCategory
+#         fields = "__all__"
 
+
+'''#######################################'''
+
+
+class PTypePosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PTypePoster
+        fields = '__all__'
 
 class PTypeImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,16 +34,27 @@ class PTypeImageSerializer(serializers.ModelSerializer):
 
 class PTypeSerializer(serializers.ModelSerializer):
 
-    parent = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
-    image = serializers.CharField(source='type_image.image')
+    url = serializers.CharField(source='type_image.image')
+    banner_url = serializers.CharField(source='type_poster.image')
+    banner_name = serializers.CharField(source='type_poster.text')
+    typeChildName = serializers.SerializerMethodField()
+    typeName = serializers.SerializerMethodField()
 
     class Meta:
         model = PType
-        fields = ('id','parent','name','desc','image')
+        fields = ('id', 'typeName', 'typeChildName', 'desc',
+                  'url', 'banner_url', 'banner_name')
 
-    def get_parent(self, obj):
-        return obj.parent.id
+    def get_typeChildName(self,obj):
+        return obj.name
+
+    def get_typeName(self, obj):
+        p = obj.parent
+        if p:
+            return p.id
+        else:
+            return None
     
     def get_desc(self, obj):
         return obj.get_desc_display()

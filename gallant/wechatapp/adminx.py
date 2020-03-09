@@ -42,49 +42,73 @@ xadmin.site.register(UserProfile,UserProfileAdmin)
 
 # 商品类别管理
 
-class ProductMainCategoryAdmin(object):
-    list_display = ('id', 'typeName')
-xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
+# class ProductMainCategoryAdmin(object):
+#     list_display = ('id', 'typeName')
+# xadmin.site.register(ProductMainCategory,ProductMainCategoryAdmin)
 
-class ProductSecondCategoryAdmin(object):
-    list_display = ('id', 'typeName','typeChildName','image_img','image_img1','banner_name')
-xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
+# class ProductSecondCategoryAdmin(object):
+#     list_display = ('id', 'typeName','typeChildName','image_img','image_img1','banner_name')
+# xadmin.site.register(ProductSecondCategory,ProductSecondCategoryAdmin)
 
-class ProductTypeAdmin(object):
-    list_display = ('id', 'typeChildName','typeChildsName','image_img')
-xadmin.site.register(ProductType,ProductTypeAdmin)
+# class ProductTypeAdmin(object):
+#     list_display = ('id', 'typeChildName','typeChildsName','image_img')
+# xadmin.site.register(ProductType,ProductTypeAdmin)
 
-class ProductUrlAdmin(object):
-    list_display = ('productbaseinfo','image_img','url')
-xadmin.site.register(ProductUrl,ProductUrlAdmin)
+# class ProductTagAdmin(object):
+#     list_display = ('productbaseinfo','tag')
+# xadmin.site.register(ProductTag,ProductTagAdmin)
 
-class ProductTagAdmin(object):
-    list_display = ('productbaseinfo','tag')
-xadmin.site.register(ProductTag,ProductTagAdmin)
-
+# TODO(GU)  未优化
 class MyTrollyAdmin(object):
     list_display = ('user','productbaseinfo','nums','checkbox')
 xadmin.site.register(MyTrolly,MyTrollyAdmin)
 
+# TODO(GU)  未优化
 class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)
 
 '''##########################################'''
-'''############### 商品类型图片管理 ###############'''
+'''############### 商品详情图片管理 ###############'''
 '''##########################################'''
+
+
+@xadmin.sites.register(ProductUrl)
+class ProductUrlAdmin(object):
+    list_display = ('productbaseinfo', 'image_img', 'url')
+
+'''##########################################'''
+'''############### 商品类型海报管理 ###############'''
+'''##########################################'''
+
+@xadmin.sites.register(PTypePoster)
+class PTypePosterAdmin(object):
+    '''商品类型海报管理'''
+    list_display = ('ptype', 'image', 'text', 'image_large')
+    search_fields = ('ptype__name',)
+
+
+'''##########################################'''
+'''############### 商品类型图标管理 ###############'''
+'''##########################################'''
+
 
 @xadmin.sites.register(PTypeImage)
 class PTypeImageAdmin(object):
-    '''商品类型图片管理'''
+    '''商品类型图标管理'''
     list_display = ('ptype', 'image', 'image_thumbnail',
-                    'image_medium', 'image_large')
+                    'image_medium')
     search_fields = ('ptype__name',)
 
 
 '''##########################################'''
 '''############### 商品类型管理 ###############'''
 '''##########################################'''
+
+
+class PTypePosterStackInline(object):
+    model = PTypePoster
+    extra = 1
 
 class PTypeImageStackInline(object):
     model = PTypeImage
@@ -111,7 +135,7 @@ class PTypeAdmin(object):
         return '|'.join(fname[::-1])
     full_name.short_description = '全称'
 
-    inlines = [PTypeImageStackInline]
+    inlines = [PTypePosterStackInline, PTypeImageStackInline]
 
 
 '''##########################################'''
@@ -132,6 +156,11 @@ class PtagAdmin(object):
 '''############### 商品信息管理 ###############'''
 '''##########################################'''
 
+
+class ProductUrlStackInline(object):
+    model = ProductUrl
+    extra = 1
+
 @xadmin.sites.register(ProductBaseInfo)
 class ProductBaseInfoAdmin(object):
     '''商品信息管理'''
@@ -140,6 +169,8 @@ class ProductBaseInfoAdmin(object):
     search_fields = ('productId', 'productName', 'systemCode', 'barCode')
     list_filter = ('productType', 'shell')
     list_editable = ('shell',)
+
+    inlines = [ProductUrlStackInline]
 
     def tag(self,obj):
         return '.'.join([x.name for x in obj.tags.all()])
@@ -173,8 +204,8 @@ class ProductBaseInfoAdmin(object):
                                 systemCode=vals[2],
                                 barCode=vals[3],
                                 smallurl='',
-                                productType=ProductType.objects.get(
-                                    typeChildsName=vals[5]),
+                                productType=PType.objects.get(
+                                    name=vals[5]),
                                 color=vals[6],
                                 norms=vals[7],
                                 weight=vals[8],

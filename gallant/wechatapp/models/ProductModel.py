@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from stdimage.models import StdImageField
-from wechatapp.models.ProductTypeModel import ProductType
+from wechatapp.models.ProductTypeModel import *
 
 # 商品基础信息表
 class ProductBaseInfo(models.Model):
@@ -17,22 +17,23 @@ class ProductBaseInfo(models.Model):
     # 品名
     productName = models.CharField(verbose_name='商品名称', max_length=255)
     # 分类 ------- 关联类目信息
-    productType = models.ForeignKey(ProductType, on_delete=models.CASCADE,verbose_name='商品分类')
+    productType = models.ForeignKey(
+        PType, on_delete=models.CASCADE, verbose_name='商品分类',blank=False,default=1,related_name="product")
     # 系统编码
-    systemCode = models.BigIntegerField(verbose_name='系统编码', blank=True)
+    systemCode = models.BigIntegerField(verbose_name='系统编码', blank=True,null=True)
     # 条形编码
-    barCode = models.BigIntegerField(verbose_name='条形编码', blank=True)
+    barCode = models.BigIntegerField(verbose_name='条形编码', blank=True,null=True)
     # 颜色
-    color = models.CharField(verbose_name='颜色', max_length=255, blank=True)
+    color = models.CharField(verbose_name='颜色', max_length=255, blank=True,null=True)
     # 规格
-    norms = models.CharField(verbose_name='规格', max_length=255, blank=True)
+    norms = models.CharField(verbose_name='规格', max_length=255, blank=True,null=True)
     # 重量
-    weight = models.IntegerField(verbose_name='重量', blank=True)
+    weight = models.IntegerField(verbose_name='重量', blank=True,null=True)
     # 价格  
     price = models.IntegerField(verbose_name='价格', blank=False)
     
     # 商品详情
-    description = models.TextField(verbose_name='商品详情', blank=True)
+    description = models.TextField(verbose_name='商品详情', blank=True,null=True)
     # 商品简介
     brief = models.TextField(
         verbose_name='商品简介', blank=True, default="这里是商品简介")
@@ -82,8 +83,8 @@ class ProductUrl(models.Model):
 
     class Meta:
         app_label = 'wechatapp'
-        verbose_name = '商品图片管理'
-        verbose_name_plural = '商品图片管理'
+        verbose_name = '商品详情图片'
+        verbose_name_plural = '商品详情图片管理'
     
     def image_img(self):
         if self.url:
@@ -94,27 +95,27 @@ class ProductUrl(models.Model):
     image_img.short_description = '商品展示缩略图'
     image_img.allow_tags = True
 
-class ProductTag(models.Model):
+# class ProductTag(models.Model):
 
-    tag_type = (
-        ('h', '热门商品'),
-        ('d', '降价促销'),
-        ('n', '新品上架'),
-    )
+#     tag_type = (
+#         ('h', '热门商品'),
+#         ('d', '降价促销'),
+#         ('n', '新品上架'),
+#     )
 
-    # 外键关联了
-    productbaseinfo = models.OneToOneField(ProductBaseInfo,on_delete=models.CASCADE,primary_key=True)
+#     # 外键关联了
+#     productbaseinfo = models.OneToOneField(ProductBaseInfo,on_delete=models.CASCADE,primary_key=True)
     
-    # 标签
-    tag = models.CharField(max_length=1, choices=tag_type)
+#     # 标签
+#     tag = models.CharField(max_length=1, choices=tag_type)
 
-    def __str__(self):
-        return self.tag.__str__()
+#     def __str__(self):
+#         return self.tag.__str__()
 
-    class Meta:
-        app_label = 'wechatapp'
-        verbose_name = '商品标签管理'
-        verbose_name_plural = '商品标签管理'
+#     class Meta:
+#         app_label = 'wechatapp'
+#         verbose_name = '商品标签管理'
+#         verbose_name_plural = '商品标签管理'
 
 
 '''#######################################'''

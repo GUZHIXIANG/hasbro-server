@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from wechatapp.models.ProductModel import (ProductBaseInfo,ProductUrl,ProductTag,PTag)
+from wechatapp.models.ProductModel import *
 
 
 
@@ -25,12 +25,12 @@ class ProductUrlSerializer(serializers.ModelSerializer):
         fields = ("url",)
 
 
-# TODO() 这个版本需要被淘汰
-class ProductTagSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProductTag
-        fields = ("tag",)
+# class ProductTagSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = ProductTag
+#         fields = ("tag",)
 
 
 class PTagSerializer(serializers.ModelSerializer):
@@ -53,3 +53,18 @@ class ItemsAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductBaseInfo
         fields = ("productId","productName","url","price",'color','norms','weight','descripation','shell',"quantity")
+
+
+class ProductSerializer2(serializers.ModelSerializer):
+    # serializers.CharField(source='productType.parent')
+    parent_type = serializers.SerializerMethodField()
+    class Meta:
+        model = ProductBaseInfo
+        fields = "__all__"#("productId", "productName", "smallurl", "price")
+
+    def get_parent_type(self,obj):
+        p = obj.productType.parent
+        if p:
+            return p.id
+        else:
+            return None

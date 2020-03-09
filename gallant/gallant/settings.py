@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'wechatapp.apps.WechatappConfig',
     'stdimage',
+    'newapp1.apps.Newapp1Config',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'wechatapp.middleware.ApiLoggingMiddleware',
     # 'request_logging.middleware.LoggingMiddleware',
 ]
 
@@ -150,4 +150,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 
 # LOGGING settings
+# XXX(GU)  日志管理冗余严重需要改进，目前全部废除
 LOG_DIR = BASE_DIR + "/log"
