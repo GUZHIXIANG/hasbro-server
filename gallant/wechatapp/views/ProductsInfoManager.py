@@ -343,7 +343,7 @@ class homepage2(APIView):
         newgoods = ProductAllSerializer(tag_new, many=True)
         discountgoods = ProductAllSerializer(tag_discount, many=True)
 
-        # 未优化
+        # TODO(GU)  未优化
         advpic = AdvPicModel.objects.all() 
         
         rollAdvPic = AdvPicSerializer(advpic, many=True)

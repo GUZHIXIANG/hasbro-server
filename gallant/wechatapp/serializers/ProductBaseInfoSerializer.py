@@ -25,7 +25,7 @@ class ProductUrlSerializer(serializers.ModelSerializer):
         fields = ("url",)
 
 
-# # TODO() 这个版本需要被淘汰
+
 # class ProductTagSerializer(serializers.ModelSerializer):
 
 #     class Meta:

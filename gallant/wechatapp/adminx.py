@@ -58,10 +58,12 @@ xadmin.site.register(UserProfile,UserProfileAdmin)
 #     list_display = ('productbaseinfo','tag')
 # xadmin.site.register(ProductTag,ProductTagAdmin)
 
+# TODO(GU)  未优化
 class MyTrollyAdmin(object):
     list_display = ('user','productbaseinfo','nums','checkbox')
 xadmin.site.register(MyTrolly,MyTrollyAdmin)
 
+# TODO(GU)  未优化
 class AdvPicAdmin(object):
     list_display = ('order','productbaseinfo','image_img')
 xadmin.site.register(AdvPicModel,AdvPicAdmin)

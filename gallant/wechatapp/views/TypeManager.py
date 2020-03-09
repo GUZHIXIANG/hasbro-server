@@ -54,16 +54,19 @@ class itemtype2(APIView):
                    },
         security=[]
     )
+    # TODO(GU)  等小魏调试
     def get(self, request, format=None):
 
-        leftlist = PType.objects.filter(parent=1)
+        leftlist = PType.objects.filter(desc=2)
         leftlist_serializer = PTypeSerializer(leftlist, many=True)
         leftlist_data = leftlist_serializer.data.copy()
+        
+        
         new_leftlist_data = []
         for i,x in enumerate(leftlist_data):
             x['order_id'] = i+1
             new_leftlist_data.append(x)
-        
+
         currentTypeId = request.GET.get('currentTypeId')
         currenttype = PType.objects.get(id=currentTypeId)
         currenttype_serializer = PTypeSerializer(currenttype)
